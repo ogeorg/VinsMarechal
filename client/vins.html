@@ -1,72 +1,14 @@
 <html>
 <head>
-<meta charset="utf-8">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/vins.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+    <script src="js/VinsModel.js"></script>
 </head>
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
-<style>
-body {
-	margin: 0;
-}
-#vinsApp {
-	background: #272727;
-	border: 1px #fff solid;
-	padding: 8px;
-	font-family: 'open sans', sans-serif;
-	font-size: 14px;
-	color: #fff;	
-}
-.qtte {
-	width: 30px;
-	text-align: right;
-}
-.totbt {
-	width: 65px;
-	text-align: right;
-}
-.total {
-	font-weight: bold;
-	color: #AC185F;
-}
-.floating {
-	float: left; 
-	width: 45%; 
-	margin-right: 10px;
-	border: 0px green solid;
-	min-width: 280px;
-}
-table.tablechoix {
-	margin-top: 10px;
-	margin-bottom: 5px;
-	border-collapse: collapse;
-	font-family: 'open sans', sans-serif;
-	font-size: 14px;
-	color: #fff;
-}
-.tablechoix td {
-	border:0px black solid;
-}
-.tablechoix td:first-child {
-	width: 35px;
-	border: 0px red solid;
-}
-
-.sectionvins {
-	clear: both;
-	font-weight: bold;
-	margin: 10px 0 5px 0;
-}
-.clear {
-	clear: both;
-}
-.adresse {
-	width: 98%;
-	height: 50px;
-}
-</style>
 <script>
 var vinsApp = angular.module("vinsApp", []);
-vinsApp.controller("vinsCtrl", function($scope) {
+vinsApp.controller("vinsCtrl", function($scope, $http) {
     $scope.pers = {
         'civi': 'Mme',
         'nom': '',
@@ -75,127 +17,13 @@ vinsApp.controller("vinsCtrl", function($scope) {
         'dirfact': '',
     };
     
-    function Item(opts)
-    {
-        this.unit = "";
-        this.desc = opts['desc'];
-        this.prixuni = opts['prixuni'];
-    }
-    Item.prototype.fprixuni = function()
-    {
-        return this.prixuni / 100;
-    };
-    Item.prototype.fprixtot = function()
-    {
-        if (this.unit == 0)
-            return "";
-        else
-            return this.prixuni * this.unit / 100;
-    };
-    
-    var vins = [{
-        'title': 'Vins blancs',
-        'groups': [
-            {
-                'desc': 'Chasselas 50cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 670
-                }, {
-                    'desc': 'carton(s) de 20',
-                    'prixuni': 13400,
-                }]
-            },{
-                'desc': 'Chasselas 70cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 930
-                }, {
-                    'desc': 'carton(s) de 6',
-                    'prixuni': 5600,
-                }, {
-                    'desc': 'carton(s) de 12',
-                    'prixuni': 11100,
-                }]
-            }
-        ]
-    },{
-        'title': 'Vins rosés',
-        'groups': [
-            {
-                'desc': 'Rosé de Gamay 50cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 670
-                }, {
-                    'desc': 'carton(s) de 20',
-                    'prixuni': 13400,
-                }]
-            },{
-                'desc': 'Rosé de Gamay 70cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 930
-                }, {
-                    'desc': 'carton(s) de 6',
-                    'prixuni': 5600,
-                }, {
-                    'desc': 'carton(s) de 12',
-                    'prixuni': 11100,
-                }]
-            }
-        ]
-    },{
-        'title': 'Vins rouges',
-        'groups': [
-            {
-                'desc': 'Pinot-Gamay 50cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 670
-                }, {
-                    'desc': 'carton(s) de 20',
-                    'prixuni': 13400,
-                }]
-            },{
-                'desc': 'Pinot-Gamay 70cl',
-                'items': [{
-                    'desc': 'bouteille(s)',
-                    'prixuni': 930
-                }, {
-                    'desc': 'carton(s) de 6',
-                    'prixuni': 5600,
-                }, {
-                    'desc': 'carton(s) de 12',
-                    'prixuni': 11100,
-                }]
-            }
-        ]
-    }];
-    for(var t=0; t<vins.length; t++) {
-        var type = vins[t];
-        for (var g=0; g<type.groups.length; g++) {
-            var gp = type.groups[g];
-            for(var i=0; i<gp.items.length; i++) {
-                gp.items[i] = new Item(gp.items[i]);
-            }
-        }
-    }
-    $scope.classesVins = vins;
-    $scope.total = function() {
-        var tot = 0;
-        for(var t=0; t<vins.length; t++) {
-            var type = vins[t];
-            for (var g=0; g<type.groups.length; g++) {
-                var gp = type.groups[g];
-                for(var i=0; i<gp.items.length; i++) {
-                    var item = gp.items[i];
-                    tot += item.unit * item.prixuni;
-                }
-            }
-        }
-        return tot / 100;
-    };
+    $http({method: 'GET', url: 'articles.json'}).
+        success(function(data, status, headers, config) {
+            $scope.vins = new Vins(data);
+        }).error(function(data, status, headers, config) {
+            console.error("Could not load data");
+            console.error(data);
+        });
 });
 </script>
 <div id='vinsApp' ng-app="vinsApp">
@@ -212,7 +40,7 @@ vinsApp.controller("vinsCtrl", function($scope) {
     <textarea id='dirlivr' ng-model='pers.dirlivr' class='adresse' required></textarea></p>
 <p class='floating'>Adresse de facturation si différente :<br />
     <textarea id='dirfact' ng-model='pers.dirfact' class='adresse' required></textarea></p>
-<div ng-repeat='clsVin in classesVins'>
+<div ng-repeat='clsVin in vins.classes'>
     <p class='sectionvins'>{{clsVin.title}}</p>
     <table class='floating tablechoix' ng-repeat='gp in clsVin.groups'>
         <tr>
@@ -226,7 +54,7 @@ vinsApp.controller("vinsCtrl", function($scope) {
     </table>
 </div>
 
-<p id='ptotal' class='total clear'>Total: <span id='total'>{{total()}}</span></p>
+<p id='ptotal' class='total clear'>Total: <span id='total'>{{vins.total()}}</span></p>
 
 <p class='clear'>
 Si vous le voulez, vous pouvez ajouter un message à votre commande:<br />
