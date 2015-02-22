@@ -1,84 +1,128 @@
-//
-// # SimpleServer
-//
-// A simple chat server using Socket.IO, Express, and Async.
-//
-var http = require('http');
-var path = require('path');
+// http://forum.codecall.net/topic/74559-the-nodejs-part6-form-programming/
+// http://stackoverflow.com/questions/15427220/how-to-handle-post-request-in-node-js
 
-var async = require('async');
-var socketio = require('socket.io');
+var http = require('http');
+var util = require('util');
+var fs = require('fs');
+var qs = require('querystring');
+var url = require('url');
 var express = require('express');
 
-//
-// ## SimpleServer `SimpleServer(obj)`
-//
-// Creates a new instance of SimpleServer with the following options:
-//  * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
-//
-var router = express();
-var server = http.createServer(router);
-var io = socketio.listen(server);
+var app = express();
 
-router.use(express.static(path.resolve(__dirname, 'client')));
-var messages = [];
-var sockets = [];
+// var logfile = fs.createWriteStream('./logfile.log', {flags: 'a'});
+// app.use(express.logger({stream: logfile}));
 
-io.on('connection', function (socket) {
-    messages.forEach(function (data) {
-      socket.emit('message', data);
-    });
+app.use(express.logger());
+app.use(express.bodyParser());
 
-    sockets.push(socket);
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
 
-    socket.on('disconnect', function () {
-      sockets.splice(sockets.indexOf(socket), 1);
-      updateRoster();
-    });
+/*
+app.configure(function() {
+  console.log("Configuring");
+  app.use(express.bodyParser());
+});
+*/
+app.use(express.static(__dirname + '/client'));
+app.use(express.static(__dirname + '/data'));
 
-    socket.on('message', function (msg) {
-      var text = String(msg || '');
+app.post("/login", function(req,res) {
+    var email   =   req.body.email;
+    var password  = req.body.password;
+    res.json({"done":"yes"});
+    // res.render('account');
+});
 
-      if (!text)
-        return;
-
-      socket.get('name', function (err, name) {
-        var data = {
-          name: name,
-          text: text
-        };
-
-        broadcast('message', data);
-        messages.push(data);
-      });
-    });
-
-    socket.on('identify', function (name) {
-      socket.set('name', String(name || 'Anonymous'), function (err) {
-        updateRoster();
-      });
-    });
-  });
-
-function updateRoster() {
-  async.map(
-    sockets,
-    function (socket, callback) {
-      socket.get('name', callback);
-    },
-    function (err, names) {
-      broadcast('roster', names);
+app.post("/commande", function(req,res) {
+    var data = req.body;
+    console.log("Recu une commande");
+    console.log(data);
+    var commande = data.commande;
+    var total = 0;
+    for(var i=0; i<commande.length; i++) {
+        var art = commande[i];
+        total += art.units * art.prixuni;
     }
-  );
+    res.json({"done":"yes", "total": total});
+});
+
+/*
+function MyForm(name, age)
+{
+    this.name = name;
+    this.age = age;
 }
 
-function broadcast(event, data) {
-  sockets.forEach(function (socket) {
-    socket.emit(event, data);
-  });
+function processPost(request, response, callback) 
+{
+    var queryData = "";
+    if(typeof callback !== 'function') return null;
+
+    if(request.method == 'POST') {
+        request.on('data', function(data) {
+            queryData += data;
+            if(queryData.length > 1e6) {
+                queryData = "";
+                response.writeHead(413, {'Content-Type': 'text/plain'}).end();
+                request.connection.destroy();
+            }
+        });
+
+        request.on('end', function() {
+            var data = qs.parse(queryData);
+            callback(data);
+        });
+
+    } else {
+        response.writeHead(405, {'Content-Type': 'text/plain'});
+        response.end();
+    }
 }
 
-server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
-  var addr = server.address();
-  console.log("Chat server listening at", addr.address + ":" + addr.port);
+app.post("/login", function(req,res) {
+    var cb = function(data) {
+        var form = new MyForm(data.name, data.age);
+        var text = "Sent data are name:"+form.name+" age:"+form.age
+        var link = "<p><a href='/'>To forms</a></p>";
+        res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+        res.end(text + link);
+    }
+    processPost(req, res, cb);
+});
+*/
+
+/*
+function processGet(request, response, callback) 
+{
+    if(typeof callback !== 'function') return null;
+
+    if(request.method == 'GET') {
+        var url_parts = url.parse(request.url,true);
+        var data = url_parts.query;
+        callback(data);
+    } else {
+        response.writeHead(405, {'Content-Type': 'text/plain'});
+        response.end();
+    }
+}
+app.get("/login", function(req,res) {
+    var cb = function(data) {
+        var form = new MyForm(data.name, data.age);
+        var text = "Sent data are name:"+form.name+" age:"+form.age
+        var link = "<p><a href='/'>To forms</a></p>";
+        res.writeHead(200, "OK", {'Content-Type': 'text/html'});
+        res.end(text + link);
+    }
+    processGet(req, res, cb);
+});
+*/
+
+var server = app.listen(process.env.PORT, process.env.IP, function () 
+{
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('Example app listening at http://%s:%s', host, port);
 });
