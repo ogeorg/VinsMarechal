@@ -1,45 +1,28 @@
 <html>
 <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/vins.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
-    <script src="js/VinsModel.js"></script>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/css/vins.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+<script src="js/VinsModel.js"></script>
+<script src="js/client.js"></script>
+
 </head>
-<body>
-<script>
-var vinsApp = angular.module("vinsApp", []);
-vinsApp.controller("vinsCtrl", function($scope, $http) {
-    $scope.pers = {
-        'civi': 'Mme',
-        'nom': '',
-        'email': '',
-        'dirlivr': '',
-        'dirfact': '',
-    };
-    
-    $http({method: 'GET', url: 'articles.json'}).
-        success(function(data, status, headers, config) {
-            $scope.vins = new Vins(data);
-        }).error(function(data, status, headers, config) {
-            console.error("Could not load data");
-            console.error(data);
-        });
-});
-</script>
-<div id='vinsApp' ng-app="vinsApp">
+<body id='vinsApp' ng-app="vinsApp">
+<div ng-controller="navCtrl"><div ng-include="'navigation.html'"></div></div>
+
 <form id='formvins' ng-controller="vinsCtrl">
 <p>Votre prénom et nom :<br />
-<select id='civi' ng-model="pers.civi">
+<select id='civi' ng-model="client.civi">
     <option value='Mme'>Madame</option>
     <option value='Mlle'>Mademoiselle</option>
-    <option value='Mr'>Monsieur</option>
-</select> <input id='nom' ng-model='pers.nom' type="text" required></p>
+    <option value='M.'>Monsieur</option>
+</select> <input id='nom' ng-model='client.nom' type="text" required></p>
 <p>Votre adresse email :<br />
-    <input id='email' ng-model='pers.email' type='email' placeholder="exemple@domaine.com" required></p>
+    <input id='email' ng-model='client.email' type='email' placeholder="exemple@domaine.com" required></p>
 <p class='floating'>Adresse de livraison :<br />
-    <textarea id='dirlivr' ng-model='pers.dirlivr' class='adresse' required></textarea></p>
+    <textarea id='dirlivr' ng-model='client.dirlivr' class='adresse' required></textarea></p>
 <p class='floating'>Adresse de facturation si différente :<br />
-    <textarea id='dirfact' ng-model='pers.dirfact' class='adresse' required></textarea></p>
+    <textarea id='dirfact' ng-model='client.dirfact' class='adresse' required></textarea></p>
 <div ng-repeat='clsVin in vins.classes'>
     <p class='sectionvins'>{{clsVin.title}}</p>
     <table class='floating tablechoix' ng-repeat='gp in clsVin.groups'>
@@ -61,10 +44,46 @@ Si vous le voulez, vous pouvez ajouter un message à votre commande:<br />
 <textarea id='commentaire' rows="6" cols="40" placeholder="Votre message"></textarea>
 </p>
 <p>
-<a href="mailto:marianne@nectardesign.ch"><input type="submit" value="Envoyer" /> 
-<input type="reset" value="Annuler" />
+    <button ng-click='send_form()'>Envoyer</button>
+    <button ng-click='reset_form()'>Annuler</button>
 </p>
 </form>
-</div>
+
+<script>
+var app = angular.module("vinsApp", []);
+app.controller("navCtrl", function($scope) {});
+app.controller("vinsCtrl", function($scope, $http) {
+    $scope.client = new Client ();
+    $scope.client.civi = "M.";
+    $scope.client.nom = "Olivier Georg";
+    $scope.client.email = "oliviergeorg@gmail.com";
+    
+    $http({method: 'GET', url: 'articles.json'}).
+        success(function(data, status, headers, config) {
+            $scope.vins = new Vins(data);
+        }).error(function(data, status, headers, config) {
+            console.error("Could not load data");
+            console.error(data);
+        });
+        
+    $scope.send_form = function() 
+    {
+        console.log("SEND");
+        var commande = this.vins.commande();
+        var client = this.client;
+        var data = {'client': client, 'commande': commande};
+        $http.post("/commande", data
+        ).success(function(data, status, headers, config) {
+            alert("commande envoyée");
+        }).error(function(data, status, headers, config) {
+            alert("problème avec la commande");
+        });
+    }
+    
+    $scope.reset_form = function() {
+        console.log("RESET");
+    }
+});
+</script>
 </body>	
 </html>
