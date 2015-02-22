@@ -1,0 +1,79 @@
+[{
+        "title": "Vins blancs",
+        "groups": [
+            {
+                "desc": "Chasselas 50cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 670
+                }, {
+                    "desc": "carton(s) de 20",
+                    "prixuni": 13400
+                }]
+            },{
+                "desc": "Chasselas 70cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 930
+                }, {
+                    "desc": "carton(s) de 6",
+                    "prixuni": 5600
+                }, {
+                    "desc": "carton(s) de 12",
+                    "prixuni": 11100
+                }]
+            }
+        ]
+    },{
+        "title": "Vins rosés",
+        "groups": [
+            {
+                "desc": "Rosé de Gamay 50cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 670
+                }, {
+                    "desc": "carton(s) de 20",
+                    "prixuni": 13400
+                }]
+            },{
+                "desc": "Rosé de Gamay 70cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 930
+                }, {
+                    "desc": "carton(s) de 6",
+                    "prixuni": 5600
+                }, {
+                    "desc": "carton(s) de 12",
+                    "prixuni": 11100
+                }]
+            }
+        ]
+    },{
+        "title": "Vins rouges",
+        "groups": [
+            {
+                "desc": "Pinot-Gamay 50cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 670
+                }, {
+                    "desc": "carton(s) de 20",
+                    "prixuni": 13400
+                }]
+            },{
+                "desc": "Pinot-Gamay 70cl",
+                "items": [{
+                    "desc": "bouteille(s)",
+                    "prixuni": 930
+                }, {
+                    "desc": "carton(s) de 6",
+                    "prixuni": 5600
+                }, {
+                    "desc": "carton(s) de 12",
+                    "prixuni": 11100
+                }]
+            }
+        ]
+    }]

@@ -1,0 +1,139 @@
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/css/vins.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+<script src="js/VinsModel.js"></script>
+<style>
+.classesVins classVin:first-child .moveClassUp {
+    visibility: hidden;
+}
+.classesVins classVin:last-child .moveClassDown {
+    visibility: hidden;
+}
+classVin {
+    display: block;
+    clear: both;
+    width: 100%;
+    border: 1px solid #fff;
+    padding: 1px;
+    margin-bottom: 3px;
+}
+classVin .title {
+    
+}
+.rightBtn {
+    float: right;
+}
+</style>
+</head>
+<body id='vinsApp' ng-app="settingsApp">
+<div ng-controller="navCtrl"><div ng-include="'navigation.html'"></div></div>
+<form id='formsettings' ng-controller="settingsCtrl">
+<h2>Gestion des articles</h2>
+
+<div id='tmpl-classVin' style='display: none'>
+    <div class='title'>
+        ==>> <input type='text' value='{{clsVin.title}}' />
+        <button class='deleteClass rightBtn' ng-click='deleteClass($index, clsVin, $event)'>x</button>
+        <button class='moveClassDown rightBtn' ng-click='moveClassDown($index, clsVin, $event)'>v</button>
+        <button class='moveClassUp rightBtn' ng-click='moveClassUp($index, clsVin, $event)'>^</button>
+    </div>
+</div>
+
+<div class='classesVins'>
+<classvin cls='clsVin' ng-repeat='clsVin in vins.classes'></classvin>
+</div>
+
+</form>
+</div>
+
+<script>
+var app = angular.module("settingsApp", []);
+app.controller("navCtrl", function($scope) {});
+app.directive('classvin', function(){
+    var tmpl = $('#classVinTmpl').html()
+    var directive = {
+		// restrict = E, signifies that directive is Element directive
+		'restrict': 'E',
+		// template replaces the complete element with its text. 
+		'template': function(elem, attr) { return $("#tmpl-classVin").html(); },
+		// scope is used to distinguish each student element based on criteria.
+		// 'scope': {student : "=name"},
+	};
+	
+	directive.compile = function(element, attributes) {
+		// linkFunction is linked with each element with scope to get the element specific data.
+		var linkFunction = function($scope, element, attributes) {
+			// element.html("Student: <b>"+$scope.student.name +"</b> , Roll No: <b>"+$scope.student.rollno+"</b><br/>");
+			element.css("background-color", "#ff00ff");
+			$(element).click(function() { 
+				console.log("clicked on" + $scope.clsVin);
+			});
+		};
+		return linkFunction;
+	};
+
+    return directive;
+});
+app.controller("settingsCtrl", function($scope, $http) {
+
+    $http({method: 'GET', url: 'articles.json'}).
+        success(function(data, status, headers, config) {
+            $scope.vins = new Vins(data);
+        }).error(function(data, status, headers, config) {
+            console.error("Could not load data");
+            console.error(data);
+        });
+    
+    $scope.send_form = function() 
+    {
+        console.log("SEND");
+        var commande = this.vins.commande();
+        var client = this.client;
+        var data = {'client': client, 'commande': commande};
+        $http.post("/commande", data
+        ).success(function(data, status, headers, config) {
+            alert("commande envoyée");
+        }).error(function(data, status, headers, config) {
+            alert("problème avec la commande");
+        });
+    }
+    
+    $scope.reset_form = function() {
+        console.log("RESET");
+    }
+    
+    $scope.moveClassUp = function($index, clsVin, $event) {
+        $event.stopPropagation();
+        // move in model
+        $scope.vins.moveClassUp($index);
+        // move in DOM
+        var $elem = $($event.target);
+        var $classvin = $elem.closest('classvin');
+        $classvin.insertBefore( $classvin.prev() );
+    };
+    $scope.moveClassDown = function($index, clsVin, $event) {
+        $event.stopPropagation();
+        // move in model
+        $scope.vins.moveClassDown($index);
+        // move in DOM
+        var $elem = $($event.target);
+        var $classvin = $elem.closest('classvin');
+        $classvin.insertAfter( $classvin.next() );
+    };
+    $scope.deleteClass = function($index, clsVin, $event) {
+        $event.stopPropagation();
+        // remove in model
+        $scope.vins.deleteClass($index);
+        // remove in DOM
+        var $elem = $($event.target);
+        var $classvin = $elem.closest('classvin');
+        $classvin.remove();
+    };
+});
+</script>
+
+</body>	
+</html>

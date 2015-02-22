@@ -1,0 +1,12 @@
+{
+  "name": "vins-marechal",
+  "version": "0.0.0",
+  "description": "Formulaire de commande de vins, avec page d'actualisation de formulaire (settings)",
+  "main": "server.js",
+  "repository": "",
+  "author": "Oliveir Georg <oliviergeorg@gmail.com>",
+  "dependencies": {
+    "async": "~0.2.8",
+    "express": "~3.2.4",
+  }
+}

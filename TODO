@@ -1,0 +1,17 @@
+vins.html doit charger le fichier articles.json
+une fois chargé, afficher la partie des articles
+
+http://stackoverflow.com/questions/22825706/angularjs-load-config-on-app-start
+
+
++ Montant en Frs (currency)
+
++ Envoyer la commande par POST
+
++ Formulaire d'actualisation: comment présenter?
+    + Un arbre (widget wix?) de classes de vins
+    + Pour chaque classe: un titre et une liste de groupes
+    + Pour chaque groupe: une description et une liste d'articles (Item)
+    + Pour chaque article: une description et un prix unitaire
+
++ Où héberger l'application
