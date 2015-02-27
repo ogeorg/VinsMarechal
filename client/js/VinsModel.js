@@ -147,7 +147,7 @@ function VinsBase()
 function Vins(data)
 {
     /**
-     * Transforme le json en modèle, avec des Items
+     * Transforme le json en modèle, avec des Groupes et des Articles
      */
     function parse(items) 
     {

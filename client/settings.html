@@ -6,23 +6,31 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
 <script src="js/VinsModel.js"></script>
 <style>
-.groups > .group:first-child > .group-title > .moveGroupUp {
-    visibility: hidden;
-}
-.groups > .group:last-child > .group-title > .moveGroupDown {
-    visibility: hidden;
-}
-classVin {
+couleur-vin, type-bouteille, article {
     display: block;
-    clear: both;
-    x-width: 100%;
-    border: 1px solid #fff;
-    padding: 1px;
-    margin-bottom: 3px;
 }
-.titleClass, .titleGroup {
-    
+
+type-bouteille:first-child > .group-title > .moveGroupUp {
+    visibility: hidden;
 }
+type-bouteille:last-child > .group-title > .moveGroupDown {
+    visibility: hidden;
+}
+
+type-bouteille:first-child > .group-title > .moveGroupUp {
+    visibility: hidden;
+}
+type-bouteille:last-child > .group-title > .moveGroupDown {
+    visibility: hidden;
+}
+
+article:first-child > .article-title > .moveGroupUp {
+    visibility: hidden;
+}
+article:last-child > .article-title > .moveGroupDown {
+    visibility: hidden;
+}
+
 .group-body, .article-body {
     margin: 5px 20px 5px 20px;
     display: none;
@@ -39,60 +47,59 @@ classVin {
     float: right;
 }
 .toggle-handler {
-    width: 20px;
+    display: inline-block;
+    width: 19px;
+    height: 19px;
+    background: url(img/expand-collapse-sprite.png) 0 0;
 }
 </style>
 </head>
 <body id='vinsApp' ng-app="settingsApp">
 <script type="text/ng-template" id='tmplArticle.html'>
-<div class='article'>
-    <div class='article-title'>
-        Description: <input type='text' ng-model='art.description' /> / 
-        Prix unitaire: <input type='text' ng-model='art.prixuni' size=8 /> centimes /
-        Exemple: 4 {{art.description}} a {{art.fprixuni()}}
-        <button class='deleteClass rightBtn' ng-click='deleteGroup(gp2, $index, $event)'>x</button>
-        <button class='moveClassDown rightBtn' ng-click='moveGroupDown(gp2, $index, $event)'>v</button>
-        <button class='moveClassUp rightBtn' ng-click='moveGroupUp(gp2, $index, $event)'>^</button>
-    </div>
+<div class='article-title'>
+    Description: <input type='text' ng-model='art.description' /> / 
+    Prix unitaire: <input type='text' ng-model='art.prixuni' size=8 /> centimes /
+    Exemple: 4 {{art.description}} a {{art.fprixuni()}}
+    <button class='deleteGroup rightBtn' ng-click='deleteGroup(gp2, $index, $event)'>x</button>
+    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(gp2, $index, $event)'>v</button>
+    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(gp2, $index, $event)'>^</button>
 </div>
 </script>
 
 <script type="text/ng-template" id='tmplTypeBouteille.html'>
-<div class='group'>
-    <div class='group-title'>
-        <span class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</span>
-        <input type='text' ng-model='gp2.description' />
-        <button class='deleteClass rightBtn' ng-click='deleteGroup(gp1, $index, $event)'>x</button>
-        <button class='moveClassDown rightBtn' ng-click='moveGroupDown(gp1, $index, $event)'>v</button>
-        <button class='moveClassUp rightBtn' ng-click='moveGroupUp(gp1, $index, $event)'>^</button>
+<div class='group-title'>
+    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp2)}}</div>
+    <input type='text' ng-model='gp2.description' />
+    <button class='deleteGroup rightBtn' ng-click='deleteGroup(gp1, $index, $event)'>x</button>
+    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(gp1, $index, $event)'>v</button>
+    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(gp1, $index, $event)'>^</button>
+</div>
+<div class='group-body'>
+    <div class='groups'>
+        <article class='group' ng-repeat='art in gp2.children'></article>
     </div>
-    <div class='group-body'>
-        <div class='groups'>
-            <div article ng-repeat='art in gp2.children'></div>
-        </div>
-        <div class='add-article'>
-            <button ng-click='appendArticle(gp2, $event)'>+</button>
-        </div>
+    <div class='add-article'>
+        <button ng-click='appendArticle(gp2, $event)'>+</button>
     </div>
 </div>
 </script>
 
 <script type="text/ng-template" id='tmplCouleurVin.html'>
-    <div class='group-title'>
-        <span class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</span>
-        <input type='text' ng-model='gp1.description' />
-        <button class='deleteGroup rightBtn' ng-click='deleteGroup(vins, $index, $event)'>x</button>
-        <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(vins, $index, $event)'>v</button>
-        <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(vins, $index, $event)'>^</button>
+<div class='group-title'>
+    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</div>
+    <input type='text' ng-model='gp1.description' />
+    <button class='deleteGroup rightBtn' ng-click='deleteGroup(vins, $index, $event)'>x</button>
+    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(vins, $index, $event)'>v</button>
+    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(vins, $index, $event)'>^</button>
+</div>
+<div class='group-body'>
+    <div class='groups'>
+        <type-bouteille class='group' ng-repeat='gp2 in gp1.children'></type-bouteille>
     </div>
-    <div class='group-body'>
-        <div class='groups'>
-            <div type-bouteille ng-repeat='gp2 in gp1.children'></div>
-        </div>
-        <div class='add-group'>
-            <button ng-click='appendGroup(gp1, $event)'>+</button>
-        </div>
+    <div class='add-group'>
+        <button ng-click='appendGroup(gp1, $event)'>+</button>
     </div>
+</div>
 </script>
 
 <div ng-controller="navCtrl"><div ng-include="'navigation.html'"></div></div>
@@ -101,7 +108,7 @@ classVin {
 <div>
     <div>Couleurs de vin</div>
     <div class='groups'>
-        <div class='group' couleur-vin ng-repeat='gp1 in vins.children'></div>
+        <couleur-vin class='group' ng-repeat='gp1 in vins.children'></couleur-vin>
     </div>
     <div class='add-group'>
         <button class='addClass rightBtn' ng-click='appendGroup(vins, $event)'>+</button>
@@ -117,30 +124,6 @@ classVin {
 <script>
 var app = angular.module("settingsApp", []);
 app.controller("navCtrl", function($scope) {});
-app.directive('couleurVin', function(){
-    var directive = {
-        'restrict': 'A',
-        'templateUrl': "tmplCouleurVin.html",
-    };
-    return directive;
-});
-app.directive('typeBouteille', function(){
-    var directive = {
-        'restrict': 'A',
-        'templateUrl': "tmplTypeBouteille.html",
-    };
-    
-    return directive;
-});
-app.directive('article', function(){
-    var directive = {
-        'restrict': 'A',
-        'templateUrl': "tmplArticle.html",
-    };
-    
-    return directive;
-});
-
 app.controller("settingsCtrl", function($scope, $http, $compile) {
 
     $http({method: 'GET', url: 'articles2.json'}).
@@ -168,7 +151,7 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
     {
         var $elem = $($event.target);
         var $group = $elem.closest('.group');
-        var $groups = $(".group-body", $group);
+        var $groups = $(".group-body", $group).first();
 
         group.isOpen = !group.isOpen;
         $groups.toggle();
@@ -187,7 +170,7 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
             alert("problème avec la commande");
         });
     };
-    
+
     $scope.reset_form = function() {
         console.log("RESET");
     };
@@ -215,7 +198,7 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
         var $classvin = $elem.closest('classvin');
         $classvin.insertBefore( $classvin.prev() );
         */
-    };
+        };
     $scope.moveGroupDown = function(parentGroup, $index, $event) {
         $event.stopPropagation();
         // move in model
@@ -226,7 +209,7 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
         var $classvin = $elem.closest('classvin');
         $classvin.insertAfter( $classvin.next() );
         */
-    };
+        };
     $scope.deleteGroup = function(parentGroup, $index, $event) {
         $event.stopPropagation();
         // remove in model
@@ -237,19 +220,42 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
         var $classvin = $elem.closest('classvin');
         $classvin.remove();
         */
-    };
+        };
     $scope.appendGroup = function(parentGroup, $event) {
         $event.stopPropagation();
         // add in model
         parentGroup.appendGroup();
         // add in DOM
-    };
+        };
     $scope.appendArticle = function(parentGroup, $event) {
         $event.stopPropagation();
         // add in model
         parentGroup.appendArticle();
         // add in DOM
+        };
+});
+app.directive('couleurVin', function(){
+    var directive = {
+        'restrict': 'AE',
+        'templateUrl': "tmplCouleurVin.html",
     };
+    return directive;
+});
+app.directive('typeBouteille', function(){
+    var directive = {
+        'restrict': 'AE',
+        'templateUrl': "tmplTypeBouteille.html",
+    };
+    
+    return directive;
+});
+app.directive('article', function(){
+    var directive = {
+        'restrict': 'AE',
+        'templateUrl': "tmplArticle.html",
+    };
+    
+    return directive;
 });
 </script>
 
