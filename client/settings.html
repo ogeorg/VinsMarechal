@@ -10,27 +10,30 @@ couleur-vin, type-bouteille, article {
     display: block;
 }
 
-type-bouteille:first-child > .group-title > .moveGroupUp {
+couleur-vin:first-child > .group-title > .group-buttons > .moveGroupUp {
     visibility: hidden;
 }
-type-bouteille:last-child > .group-title > .moveGroupDown {
-    visibility: hidden;
-}
-
-type-bouteille:first-child > .group-title > .moveGroupUp {
-    visibility: hidden;
-}
-type-bouteille:last-child > .group-title > .moveGroupDown {
+couleur-vin:last-child > .group-title > .group-buttons > .moveGroupDown {
     visibility: hidden;
 }
 
-article:first-child > .article-title > .moveGroupUp {
+type-bouteille:first-child > .group-title > .group-buttons > .moveGroupUp {
     visibility: hidden;
 }
-article:last-child > .article-title > .moveGroupDown {
+type-bouteille:last-child > .group-title > .group-buttons > .moveGroupDown {
     visibility: hidden;
 }
 
+article:first-child > .article-title > .group-buttons > .moveGroupUp {
+    visibility: hidden;
+}
+article:last-child > .article-title > .group-buttons > .moveGroupDown {
+    visibility: hidden;
+}
+
+.group-title {
+    background-color: #333;
+}
 .group-body, .article-body {
     margin: 5px 20px 5px 20px;
     display: none;
@@ -43,62 +46,118 @@ article:last-child > .article-title > .moveGroupDown {
     clear: both;
     text-align: right;
 }
-.rightBtn {
-    float: right;
-}
 .toggle-handler {
     display: inline-block;
-    width: 19px;
-    height: 19px;
-    background: url(img/expand-collapse-sprite.png) 0 0;
+    width: 15px;
+    height: 15px;
+    background: url(img/glyphicons-halflings-white.png);
+    background-position: 15px 89px;
+}
+.toggle-handler.open {
+    background-position: 158px 42px;
+}
+article .attribute {
+    display: inline-block;
+    width: 30%;
+}
+.article-prixuni {
+    width: 50px;
+    text-align: right;
+}
+.group-buttons {
+    float: right;
+}
+.group-buttons button {
+    background-color: #fff;
+    padding: 0;
+}
+.group-buttons button div {
+    background: url(img/glyphicons-halflings.png);
+    height: 18px;
+    width: 18px;
+}
+.group-buttons button.deleteGroup div {
+    background-position: 158px 160px;
+}
+.group-buttons button.deleteGroup:active div {
+    background-position: 159px 161px;
+}
+.group-buttons button.moveGroupDown div {
+    background-position: 158px 40px;
+}
+.group-buttons button.moveGroupDown:active div {
+    background-position: 159px 41px;
+}
+.group-buttons button.moveGroupUp div {
+    background-position: 182px 40px;
+}
+.group-buttons button.moveGroupUp:active div {
+    background-position: 183px 41px;
+}
+.group-buttons button.appendGroup div {
+    background-position: 62px 62px;
+}
+.group-buttons button.appendGroup:active div {
+    background-position: 63px 63px;
 }
 </style>
 </head>
 <body id='vinsApp' ng-app="settingsApp">
 <script type="text/ng-template" id='tmplArticle.html'>
 <div class='article-title'>
-    Description: <input type='text' ng-model='art.description' /> / 
-    Prix unitaire: <input type='text' ng-model='art.prixuni' size=8 /> centimes /
-    Exemple: 4 {{art.description}} a {{art.fprixuni()}}
-    <button class='deleteGroup rightBtn' ng-click='deleteGroup(gp2, $index, $event)'>x</button>
-    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(gp2, $index, $event)'>v</button>
-    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(gp2, $index, $event)'>^</button>
+    <div class="attribute"><i>Description</i>: 
+        <input type='text' ng-model='art.description' /></div>
+    <div class="attribute"><i>Prix unitaire</i>:
+        <input type='text' class='article-prixuni' ng-model='art.prixuni' size=8 /> centimes</div>
+    <div class="attribute"><i>Exemple</i>: 
+        4 {{art.description}} a {{art.fprixuni()}}</div>
+    <div class='group-buttons'>
+        <button class='moveGroupUp' ng-click='moveGroupUp(gp2, $index, $event)'><div /></button
+        ><button class='moveGroupDown' ng-click='moveGroupDown(gp2, $index, $event)'><div /></button
+        ><button class='deleteGroup' ng-click='deleteGroup(gp2, $index, $event)'><div /></button>
+    </div>
 </div>
 </script>
 
 <script type="text/ng-template" id='tmplTypeBouteille.html'>
 <div class='group-title'>
-    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp2)}}</div>
+    <div class='toggle-handler' ng-click='toggleGroup(gp2, $event)'></div>
     <input type='text' ng-model='gp2.description' />
-    <button class='deleteGroup rightBtn' ng-click='deleteGroup(gp1, $index, $event)'>x</button>
-    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(gp1, $index, $event)'>v</button>
-    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(gp1, $index, $event)'>^</button>
+    <div class='group-buttons'>
+        <button class='moveGroupUp' ng-click='moveGroupUp(gp1, $index, $event)'><div /></button
+        ><button class='moveGroupDown' ng-click='moveGroupDown(gp1, $index, $event)'><div /></button
+        ><button class='deleteGroup' ng-click='deleteGroup(gp1, $index, $event)'><div /></button>
+    </div>
 </div>
 <div class='group-body'>
     <div class='groups'>
         <article class='group' ng-repeat='art in gp2.children'></article>
     </div>
-    <div class='add-article'>
-        <button ng-click='appendArticle(gp2, $event)'>+</button>
+    <div class='group-buttons'>
+        <button class='appendGroup' ng-click='appendArticle(gp2, $event)'><div /></button>
     </div>
+    <div style='clear: both' />
 </div>
 </script>
 
 <script type="text/ng-template" id='tmplCouleurVin.html'>
 <div class='group-title'>
-    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</div>
+    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'></div>
     <input type='text' ng-model='gp1.description' />
-    <button class='deleteGroup rightBtn' ng-click='deleteGroup(vins, $index, $event)'>x</button>
-    <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(vins, $index, $event)'>v</button>
-    <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(vins, $index, $event)'>^</button>
+    <div class='group-buttons'>
+        <button class='moveGroupUp' ng-click='moveGroupUp(vins, $index, $event)'><div /></button
+        ><button class='moveGroupDown' ng-click='moveGroupDown(vins, $index, $event)'><div /></button
+        ><button class='deleteGroup' ng-click='deleteGroup(vins, $index, $event)'><div /></button>
+    </div>
 </div>
 <div class='group-body'>
     <div class='groups'>
         <type-bouteille class='group' ng-repeat='gp2 in gp1.children'></type-bouteille>
     </div>
-    <div class='add-group'>
-        <button ng-click='appendGroup(gp1, $event)'>+</button>
+    <div class='group-buttons'>
+        <button class='appendGroup' ng-click='appendGroup(gp1, $event)'><div /></button>
     </div>
+    <div style='clear: both' />
 </div>
 </script>
 
@@ -110,8 +169,8 @@ article:last-child > .article-title > .moveGroupDown {
     <div class='groups'>
         <couleur-vin class='group' ng-repeat='gp1 in vins.children'></couleur-vin>
     </div>
-    <div class='add-group'>
-        <button class='addClass rightBtn' ng-click='appendGroup(vins, $event)'>+</button>
+    <div class='group-buttons'>
+        <button class='appendGroup' ng-click='appendGroup(vins, $event)'><div /></button>
     </div>
     <div>
         <button ng-click="submit_settings()">Sauver</button>
@@ -137,15 +196,6 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
     $scope.$on("$destroy", function() {
         this.$$nextSibling = null;
     });
-    
-    $scope.toggleHandler = function(clsVin)
-    {
-        if (clsVin.isOpen) {
-            return "v";
-        } else {
-            return ">";
-        }
-    }
 
     $scope.toggleGroup = function(group, $event)
     {
@@ -154,6 +204,10 @@ app.controller("settingsCtrl", function($scope, $http, $compile) {
         var $groups = $(".group-body", $group).first();
 
         group.isOpen = !group.isOpen;
+        if (group.isOpen) 
+            $elem.addClass("open");
+        else
+            $elem.removeClass("open");
         $groups.toggle();
     };
 
