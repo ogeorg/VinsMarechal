@@ -26,7 +26,10 @@ app.configure(function() {
   app.use(express.bodyParser());
 });
 */
+
+/* Serves /client/...  */
 app.use(express.static(__dirname + '/client'));
+/* Serves /data/...  */
 app.use(express.static(__dirname + '/data'));
 
 app.post("/login", function(req,res) {
@@ -34,6 +37,24 @@ app.post("/login", function(req,res) {
     var password  = req.body.password;
     res.json({"done":"yes"});
     // res.render('account');
+});
+
+app.post("/settings", function(req, res) {
+    var artFile = "data/articles2.json";
+    var data = req.body;
+    console.log("Recu les settings");
+    console.log(data);
+    var data = JSON.stringify(data, null, 4);
+    console.log(data);
+    fs.writeFile(artFile, data, function(err) {
+        if(err) {
+            console.log("error saving to " + artFile);
+            res.json({"done":"no"});
+        } else {
+            console.log("JSON saved to " + artFile);
+            res.json({"done":"yes"});
+        }
+    }); 
 });
 
 app.post("/commande", function(req,res) {
@@ -48,77 +69,6 @@ app.post("/commande", function(req,res) {
     }
     res.json({"done":"yes", "total": total});
 });
-
-/*
-function MyForm(name, age)
-{
-    this.name = name;
-    this.age = age;
-}
-
-function processPost(request, response, callback) 
-{
-    var queryData = "";
-    if(typeof callback !== 'function') return null;
-
-    if(request.method == 'POST') {
-        request.on('data', function(data) {
-            queryData += data;
-            if(queryData.length > 1e6) {
-                queryData = "";
-                response.writeHead(413, {'Content-Type': 'text/plain'}).end();
-                request.connection.destroy();
-            }
-        });
-
-        request.on('end', function() {
-            var data = qs.parse(queryData);
-            callback(data);
-        });
-
-    } else {
-        response.writeHead(405, {'Content-Type': 'text/plain'});
-        response.end();
-    }
-}
-
-app.post("/login", function(req,res) {
-    var cb = function(data) {
-        var form = new MyForm(data.name, data.age);
-        var text = "Sent data are name:"+form.name+" age:"+form.age
-        var link = "<p><a href='/'>To forms</a></p>";
-        res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-        res.end(text + link);
-    }
-    processPost(req, res, cb);
-});
-*/
-
-/*
-function processGet(request, response, callback) 
-{
-    if(typeof callback !== 'function') return null;
-
-    if(request.method == 'GET') {
-        var url_parts = url.parse(request.url,true);
-        var data = url_parts.query;
-        callback(data);
-    } else {
-        response.writeHead(405, {'Content-Type': 'text/plain'});
-        response.end();
-    }
-}
-app.get("/login", function(req,res) {
-    var cb = function(data) {
-        var form = new MyForm(data.name, data.age);
-        var text = "Sent data are name:"+form.name+" age:"+form.age
-        var link = "<p><a href='/'>To forms</a></p>";
-        res.writeHead(200, "OK", {'Content-Type': 'text/html'});
-        res.end(text + link);
-    }
-    processGet(req, res, cb);
-});
-*/
 
 var server = app.listen(process.env.PORT, process.env.IP, function () 
 {

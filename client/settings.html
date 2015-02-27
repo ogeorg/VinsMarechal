@@ -6,44 +6,109 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
 <script src="js/VinsModel.js"></script>
 <style>
-.classesVins classVin:first-child .moveClassUp {
+.groups > .group:first-child > .group-title > .moveGroupUp {
     visibility: hidden;
 }
-.classesVins classVin:last-child .moveClassDown {
+.groups > .group:last-child > .group-title > .moveGroupDown {
     visibility: hidden;
 }
 classVin {
     display: block;
     clear: both;
-    width: 100%;
+    x-width: 100%;
     border: 1px solid #fff;
     padding: 1px;
     margin-bottom: 3px;
 }
-classVin .title {
+.titleClass, .titleGroup {
     
+}
+.group-body, .article-body {
+    margin: 5px 20px 5px 20px;
+    display: none;
+}
+.group {
+    border: 1px solid #fff;
+    clear: both;
+}
+.add-group, .add-article {
+    clear: both;
+    text-align: right;
 }
 .rightBtn {
     float: right;
 }
+.toggle-handler {
+    width: 20px;
+}
 </style>
 </head>
 <body id='vinsApp' ng-app="settingsApp">
+<script type="text/ng-template" id='tmplArticle.html'>
+<div class='article'>
+    <div class='article-title'>
+        Description: <input type='text' ng-model='art.description' /> / 
+        Prix unitaire: <input type='text' ng-model='art.prixuni' size=8 /> centimes /
+        Exemple: 4 {{art.description}} a {{art.fprixuni()}}
+        <button class='deleteClass rightBtn' ng-click='deleteGroup(gp2, $index, $event)'>x</button>
+        <button class='moveClassDown rightBtn' ng-click='moveGroupDown(gp2, $index, $event)'>v</button>
+        <button class='moveClassUp rightBtn' ng-click='moveGroupUp(gp2, $index, $event)'>^</button>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id='tmplTypeBouteille.html'>
+<div class='group'>
+    <div class='group-title'>
+        <span class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</span>
+        <input type='text' ng-model='gp2.description' />
+        <button class='deleteClass rightBtn' ng-click='deleteGroup(gp1, $index, $event)'>x</button>
+        <button class='moveClassDown rightBtn' ng-click='moveGroupDown(gp1, $index, $event)'>v</button>
+        <button class='moveClassUp rightBtn' ng-click='moveGroupUp(gp1, $index, $event)'>^</button>
+    </div>
+    <div class='group-body'>
+        <div class='groups'>
+            <div article ng-repeat='art in gp2.children'></div>
+        </div>
+        <div class='add-article'>
+            <button ng-click='appendArticle(gp2, $event)'>+</button>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id='tmplCouleurVin.html'>
+    <div class='group-title'>
+        <span class='toggle-handler' ng-click='toggleGroup(gp1, $event)'>{{toggleHandler(gp1)}}</span>
+        <input type='text' ng-model='gp1.description' />
+        <button class='deleteGroup rightBtn' ng-click='deleteGroup(vins, $index, $event)'>x</button>
+        <button class='moveGroupDown rightBtn' ng-click='moveGroupDown(vins, $index, $event)'>v</button>
+        <button class='moveGroupUp rightBtn' ng-click='moveGroupUp(vins, $index, $event)'>^</button>
+    </div>
+    <div class='group-body'>
+        <div class='groups'>
+            <div type-bouteille ng-repeat='gp2 in gp1.children'></div>
+        </div>
+        <div class='add-group'>
+            <button ng-click='appendGroup(gp1, $event)'>+</button>
+        </div>
+    </div>
+</script>
+
 <div ng-controller="navCtrl"><div ng-include="'navigation.html'"></div></div>
 <form id='formsettings' ng-controller="settingsCtrl">
 <h2>Gestion des articles</h2>
-
-<div id='tmpl-classVin' style='display: none'>
-    <div class='title'>
-        ==>> <input type='text' value='{{clsVin.title}}' />
-        <button class='deleteClass rightBtn' ng-click='deleteClass($index, clsVin, $event)'>x</button>
-        <button class='moveClassDown rightBtn' ng-click='moveClassDown($index, clsVin, $event)'>v</button>
-        <button class='moveClassUp rightBtn' ng-click='moveClassUp($index, clsVin, $event)'>^</button>
+<div>
+    <div>Couleurs de vin</div>
+    <div class='groups'>
+        <div class='group' couleur-vin ng-repeat='gp1 in vins.children'></div>
     </div>
-</div>
-
-<div class='classesVins'>
-<classvin cls='clsVin' ng-repeat='clsVin in vins.classes'></classvin>
+    <div class='add-group'>
+        <button class='addClass rightBtn' ng-click='appendGroup(vins, $event)'>+</button>
+    </div>
+    <div>
+        <button ng-click="submit_settings()">Sauver</button>
+    </div>
 </div>
 
 </form>
@@ -52,41 +117,63 @@ classVin .title {
 <script>
 var app = angular.module("settingsApp", []);
 app.controller("navCtrl", function($scope) {});
-app.directive('classvin', function(){
-    var tmpl = $('#classVinTmpl').html()
+app.directive('couleurVin', function(){
     var directive = {
-		// restrict = E, signifies that directive is Element directive
-		'restrict': 'E',
-		// template replaces the complete element with its text. 
-		'template': function(elem, attr) { return $("#tmpl-classVin").html(); },
-		// scope is used to distinguish each student element based on criteria.
-		// 'scope': {student : "=name"},
-	};
-	
-	directive.compile = function(element, attributes) {
-		// linkFunction is linked with each element with scope to get the element specific data.
-		var linkFunction = function($scope, element, attributes) {
-			// element.html("Student: <b>"+$scope.student.name +"</b> , Roll No: <b>"+$scope.student.rollno+"</b><br/>");
-			element.css("background-color", "#ff00ff");
-			$(element).click(function() { 
-				console.log("clicked on" + $scope.clsVin);
-			});
-		};
-		return linkFunction;
-	};
-
+        'restrict': 'A',
+        'templateUrl': "tmplCouleurVin.html",
+    };
     return directive;
 });
-app.controller("settingsCtrl", function($scope, $http) {
+app.directive('typeBouteille', function(){
+    var directive = {
+        'restrict': 'A',
+        'templateUrl': "tmplTypeBouteille.html",
+    };
+    
+    return directive;
+});
+app.directive('article', function(){
+    var directive = {
+        'restrict': 'A',
+        'templateUrl': "tmplArticle.html",
+    };
+    
+    return directive;
+});
 
-    $http({method: 'GET', url: 'articles.json'}).
+app.controller("settingsCtrl", function($scope, $http, $compile) {
+
+    $http({method: 'GET', url: 'articles2.json'}).
         success(function(data, status, headers, config) {
             $scope.vins = new Vins(data);
         }).error(function(data, status, headers, config) {
             console.error("Could not load data");
             console.error(data);
         });
+
+    $scope.$on("$destroy", function() {
+        this.$$nextSibling = null;
+    });
     
+    $scope.toggleHandler = function(clsVin)
+    {
+        if (clsVin.isOpen) {
+            return "v";
+        } else {
+            return ">";
+        }
+    }
+
+    $scope.toggleGroup = function(group, $event)
+    {
+        var $elem = $($event.target);
+        var $group = $elem.closest('.group');
+        var $groups = $(".group-body", $group);
+
+        group.isOpen = !group.isOpen;
+        $groups.toggle();
+    };
+
     $scope.send_form = function() 
     {
         console.log("SEND");
@@ -99,38 +186,69 @@ app.controller("settingsCtrl", function($scope, $http) {
         }).error(function(data, status, headers, config) {
             alert("problème avec la commande");
         });
-    }
+    };
     
     $scope.reset_form = function() {
         console.log("RESET");
-    }
+    };
+
+    $scope.submit_settings = function() {
+        console.log("SEND SETTINGS");
+        var vins = this.vins;
+        $http
+            .post("/settings", vins.children)
+            .success(function(data, status, headers, config) {
+                alert("settings envoyés");
+                })
+            .error(function(data, status, headers, config) {
+                alert("problème avec la commande");
+                });
+    };
     
-    $scope.moveClassUp = function($index, clsVin, $event) {
+    $scope.moveGroupUp = function(parentGroup, $index, $event) {
         $event.stopPropagation();
         // move in model
-        $scope.vins.moveClassUp($index);
+        parentGroup.moveChildUp($index);
+        /*
         // move in DOM
         var $elem = $($event.target);
         var $classvin = $elem.closest('classvin');
         $classvin.insertBefore( $classvin.prev() );
+        */
     };
-    $scope.moveClassDown = function($index, clsVin, $event) {
+    $scope.moveGroupDown = function(parentGroup, $index, $event) {
         $event.stopPropagation();
         // move in model
-        $scope.vins.moveClassDown($index);
+        parentGroup.moveChildDown($index);
+        /*
         // move in DOM
         var $elem = $($event.target);
         var $classvin = $elem.closest('classvin');
         $classvin.insertAfter( $classvin.next() );
+        */
     };
-    $scope.deleteClass = function($index, clsVin, $event) {
+    $scope.deleteGroup = function(parentGroup, $index, $event) {
         $event.stopPropagation();
         // remove in model
-        $scope.vins.deleteClass($index);
+        parentGroup.deleteChild($index);
+        /*
         // remove in DOM
         var $elem = $($event.target);
         var $classvin = $elem.closest('classvin');
         $classvin.remove();
+        */
+    };
+    $scope.appendGroup = function(parentGroup, $event) {
+        $event.stopPropagation();
+        // add in model
+        parentGroup.appendGroup();
+        // add in DOM
+    };
+    $scope.appendArticle = function(parentGroup, $event) {
+        $event.stopPropagation();
+        // add in model
+        parentGroup.appendArticle();
+        // add in DOM
     };
 });
 </script>

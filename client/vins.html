@@ -23,16 +23,16 @@
     <textarea id='dirlivr' ng-model='client.dirlivr' class='adresse' required></textarea></p>
 <p class='floating'>Adresse de facturation si différente :<br />
     <textarea id='dirfact' ng-model='client.dirfact' class='adresse' required></textarea></p>
-<div ng-repeat='clsVin in vins.classes'>
-    <p class='sectionvins'>{{clsVin.title}}</p>
-    <table class='floating tablechoix' ng-repeat='gp in clsVin.groups'>
+<div ng-repeat='gp1 in vins.children'>
+    <p class='sectionvins'>{{gp1.description}}</p>
+    <table class='floating tablechoix' ng-repeat='gp2 in gp1.children'>
         <tr>
-            <th colspan='3'>{{gp.desc}}</th>
+            <th colspan='3'>{{gp2.description}}</th>
         </tr>
-        <tr ng-repeat='item in gp.items'>
-            <td><input type='text' ng-model='item.unit' id='ch50_1' class='qtte' placeholder='0'/></td>
-            <td>{{item.desc}} à {{item.fprixuni()}}</td>
-            <td class='totbt'>{{item.fprixtot()}}</td>
+        <tr ng-repeat='art in gp2.children'>
+            <td><input type='text' ng-model='art.unit' id='ch50_1' class='qtte' placeholder='0'/></td>
+            <td>{{art.description}} à {{art.fprixuni()}}</td>
+            <td class='totbt'>{{art.fprixtot()}}</td>
         </tr>
     </table>
 </div>
@@ -58,7 +58,7 @@ app.controller("vinsCtrl", function($scope, $http) {
     $scope.client.nom = "Olivier Georg";
     $scope.client.email = "oliviergeorg@gmail.com";
     
-    $http({method: 'GET', url: 'articles.json'}).
+    $http({method: 'GET', url: 'articles2.json'}).
         success(function(data, status, headers, config) {
             $scope.vins = new Vins(data);
         }).error(function(data, status, headers, config) {

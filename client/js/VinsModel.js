@@ -1,14 +1,127 @@
-function Item(opts)
+Array.prototype.moveUp = function(index, by) {
+    var value = this[index],
+        newPos = index - (by || 1);
+    
+    if(newPos < 0) 
+        newPos = 0;
+        
+    this.splice(index,1);
+    this.splice(newPos,0,value);
+};
+
+Array.prototype.moveDown = function(index, by) {
+    var value = this[index],
+        newPos = index + (by || 1);
+    
+    if(newPos >= this.length) 
+        newPos = this.length;
+    
+    this.splice(index, 1);
+    this.splice(newPos,0,value);
+};
+
+/**
+ * A group is defined by a description and a list of children
+ * A child can be another group or an article
+ */
+function Group(opts)
 {
+    opts = opts || {};
+    this.type = "Group";
+    this.description = opts.description;
+    this.children = [];
+}
+
+/**
+ * Recursively calculates the total of orders
+ *
+ * @return the total of the subgroups and articles
+ */
+Group.prototype.total = function() 
+{
+    var tot = 0;
+    for(var c=0; c<this.children.length; c++) {
+        tot += this.children[c].total();
+    }
+    return tot;
+};
+
+/**
+ * Recursively collects the commands
+ * 
+ * @param commands list of commands
+ * @param descriptions stack of descriptions of the distints levels of groups
+ */
+Group.prototype.collectCommands = function(commands, descriptions)
+{
+    descriptions.push(this.description);
+    for(var c=0; c<this.children.length; c++) {
+        tot += this.children[c].collectCommands(commands, descriptions);
+    }
+    descriptions.pop();
+}
+
+Group.prototype.moveChildUp = function(index) {
+    this.children.moveUp(index);
+    console.log("moving class of " + index + " up in model");
+};
+
+Group.prototype.moveChildDown = function(index) {
+    this.children.moveDown(index);
+    console.log("moving class of " + index + " down in model");
+};
+
+Group.prototype.deleteChild= function(index) {
+    this.children.splice(index, 1);
+    console.log("removing class of " + index + " in model");
+};
+
+Group.prototype.appendGroup = function() {
+    var child = new Group();
+    child.description = "Groupe d'articles";
+    this.children.push(child);
+    console.log("adding a new group");
+};
+
+Group.prototype.appendArticle = function() {
+    var child = new Article();
+    child.description = "Article";
+    this.children.push(child);
+    console.log("adding a new article");
+};
+
+/**
+ * An article is defined by a number of units, a description and a unitry price
+ */
+function Article(opts) 
+{
+    opts = opts || {};
+    this.type = "Article";
     this.unit = "";
-    this.desc = opts['desc'];
+    this.description = opts['description'];
     this.prixuni = opts['prixuni'];
 }
-Item.prototype.fprixuni = function()
+Article.prototype.total = function() 
+{
+    return this.unit * this.prixuni;
+}
+Article.prototype.collectCommands = function(commands, descriptions)
+{
+    if (this.unit) {
+        commands.push({
+            'group': descriptions.join(" / "),
+            'item': item.desc,
+            'prixuni': item.prixuni,
+            'units': item.unit
+        })
+    }
+}
+Article.prototype.fprixuni = function()
 {
     return this.prixuni / 100;
 };
-Item.prototype.fprixtot = function()
+
+Article.prototype.fprixtot = function()
 {
     if (this.unit == 0)
         return "";
@@ -24,7 +137,7 @@ Item.prototype.fprixtot = function()
 function VinsBase()
 {
     this.total = function() {
-        
+        return "";
     };
 }
 
@@ -36,67 +149,32 @@ function Vins(data)
     /**
      * Transforme le json en modèle, avec des Items
      */
-    function vinsDict2Item(data) {
-        for(var t=0; t<data.length; t++) {
-            var type = data[t];
-            for (var g=0; g<type.groups.length; g++) {
-                var gp = type.groups[g];
-                for(var i=0; i<gp.items.length; i++) {
-                    // Remplace le dict par un Item
-                    gp.items[i] = new Item(gp.items[i]);
-                }
+    function parse(items) 
+    {
+        var groups = [];
+        for(var c=0; c<items.length; c++) {
+            var child = items[c];
+            var type = child.type;
+            if (type == 'Group') {
+                var group = new Group(child);
+                group.children = parse(child.children);
+                groups.push(group);
+            } else if (type == 'Article') {
+                var art = new Article(child);
+                groups.push(art);
             }
         }
-        return data;
+        return groups;
     }
-    this.classes = vinsDict2Item(data);
-    this.total = function() {
-        var tot = 0;
-        for(var t=0; t<this.classes.length; t++) {
-            var type = this.classes[t];
-            for (var g=0; g<type.groups.length; g++) {
-                var gp = type.groups[g];
-                for(var i=0; i<gp.items.length; i++) {
-                    var item = gp.items[i];
-                    tot += item.unit * item.prixuni;
-                }
-            }
-        }
-        return tot / 100;
-    };
-    this.commande = function() {
-        var articles = [];
-        for(var t=0; t<this.classes.length; t++) {
-            var type = this.classes[t];
-            for (var g=0; g<type.groups.length; g++) {
-                var gp = type.groups[g];
-                for(var i=0; i<gp.items.length; i++) {
-                    var item = gp.items[i];
-                    if (item.unit) {
-                        articles.push({
-                            'type': type.title, 
-                            'group': gp.desc,
-                            'item': item.desc,
-                            'prixuni': item.prixuni,
-                            'units': item.unit
-                        })
-                    }
-                }
-            }
-        }
-        return articles;
-    }
+    this.children = parse(data);
 }
+Vins.prototype = new Group();
 
-Vins.prototype.moveClassUp = function(index) {
-    console.log("moving class of " + index + " up in model");
-};
-
-Vins.prototype.moveClassDown = function(index) {
-    console.log("moving class of " + index + " down in model");
-};
-
-Vins.prototype.deleteClass = function(index) {
-    console.log("removing class of " + index + " in model");
-};
-
+Vins.prototype.total = function()
+{
+    var tot = 0;
+    for(var c=0; c<this.children.length; c++) {
+        tot += this.children[c].total();
+    }
+    return tot / 100;
+}

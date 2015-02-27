@@ -1,0 +1,146 @@
+[
+    {
+        "type": "Group",
+        "description": "Vins rouges",
+        "children": [
+            {
+                "type": "Group",
+                "description": "Pinot-Gamay 50cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 670
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 20",
+                        "prixuni": 13400
+                    }
+                ]
+            },
+            {
+                "type": "Group",
+                "description": "Pinot-Gamay 70cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 930
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 6",
+                        "prixuni": 5600
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 12",
+                        "prixuni": 11100
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "Group",
+        "description": "Vins rosés",
+        "children": [
+            {
+                "type": "Group",
+                "description": "Rosé de Gamay 50cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 670
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 20",
+                        "prixuni": 13400
+                    }
+                ]
+            },
+            {
+                "type": "Group",
+                "description": "Rosé de Gamay 70cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 930
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 6",
+                        "prixuni": 5600
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 12",
+                        "prixuni": 11100
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "Group",
+        "description": "Vins blancs",
+        "children": [
+            {
+                "type": "Group",
+                "description": "Chasselas 50cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 670
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 20",
+                        "prixuni": 13400
+                    }
+                ]
+            },
+            {
+                "type": "Group",
+                "description": "Chasselas 70cl",
+                "children": [
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "bouteille(s)",
+                        "prixuni": 930
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 6",
+                        "prixuni": 5600
+                    },
+                    {
+                        "type": "Article",
+                        "unit": "",
+                        "description": "carton(s) de 12",
+                        "prixuni": 11100
+                    }
+                ]
+            }
+        ]
+    }
+]
