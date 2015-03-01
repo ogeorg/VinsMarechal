@@ -19,7 +19,8 @@
                         "description": "carton(s) de 20",
                         "prixuni": 13400
                     }
-                ]
+                ],
+                "isOpen": true
             },
             {
                 "type": "Group",
@@ -45,7 +46,8 @@
                     }
                 ]
             }
-        ]
+        ],
+        "isOpen": true
     },
     {
         "type": "Group",

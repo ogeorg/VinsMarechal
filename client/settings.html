@@ -1,10 +1,9 @@
 <html>
 <head>
 <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/ui-lib.min.css"/>
+
 <link rel="stylesheet" href="/css/vins.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
-<script src="js/VinsModel.js"></script>
 <style>
 couleur-vin, type-bouteille, article {
     display: block;
@@ -31,8 +30,10 @@ article:last-child > .article-title > .group-buttons > .moveGroupDown {
     visibility: hidden;
 }
 
-.group-title {
-    background-color: #333;
+.group-title, .article-title {
+    -background-color: #333;
+    line-height: 25px;
+    margin: 0 5px 0 5px;
 }
 .group-body, .article-body {
     margin: 5px 20px 5px 20px;
@@ -42,6 +43,37 @@ article:last-child > .article-title > .group-buttons > .moveGroupDown {
     border: 1px solid #fff;
     clear: both;
 }
+.group:first-child {
+    -webkit-border-radius: 10px 10px 0 0;
+}
+.group:last-child {
+    -webkit-border-radius: 0 0 10px 10px;
+}
+
+.acc-pane: {
+    -webkit-border-radius: initial;
+    -moz-border-radius: initial;
+    -ms-border-radius: initial;
+    -o-border-radius: initial;
+    border-radius: initial;
+    margin-bottom: 0 !important;
+}
+.acc-pane:first-child {
+    -webkit-border-radius: 7px 7px 0 0;
+    -moz-border-radius: 7px 7px 0 0;
+    -ms-border-radius: 7px 7px 0 0;
+    -o-border-radius: 7px 7px 0 0;
+    border-radius: 7px 7px 0 0;
+    margin-bottom: 0 !important;
+}
+.acc-pane:last-child {
+    -webkit-border-radius: 0 0 7px 7px;
+    -moz-border-radius: 0 0 7px 7px;
+    -ms-border-radius: 0 0 7px 7px;
+    -o-border-radius: 0 0 7px 7px;
+    border-radius: 0 0 7px 7px;
+}
+
 .add-group, .add-article {
     clear: both;
     text-align: right;
@@ -104,62 +136,79 @@ article .attribute {
 </head>
 <body id='vinsApp' ng-app="settingsApp">
 <script type="text/ng-template" id='tmplArticle.html'>
-<div class='article-title'>
-    <div class="attribute"><i>Description</i>: 
-        <input type='text' ng-model='art.description' /></div>
-    <div class="attribute"><i>Prix unitaire</i>:
-        <input type='text' class='article-prixuni' ng-model='art.prixuni' size=8 /> centimes</div>
-    <div class="attribute"><i>Exemple</i>: 
-        4 {{art.description}} a {{art.fprixuni()}}</div>
-    <div class='group-buttons'>
-        <button class='moveGroupUp' ng-click='moveGroupUp(gp2, $index, $event)'><div /></button
-        ><button class='moveGroupDown' ng-click='moveGroupDown(gp2, $index, $event)'><div /></button
-        ><button class='deleteGroup' ng-click='deleteGroup(gp2, $index, $event)'><div /></button>
+    <div class='article-title'>
+        <div class="attribute"><i>Description</i>: 
+            <input type='text' ng-model='art.description' /></div>
+        <div class="attribute"><i>Prix unitaire</i>:
+            <input type='text' class='article-prixuni' ng-model='art.prixuni' size=8 /> centimes</div>
+        <div class="attribute"><i>Exemple</i>: 
+            4 {{art.description}} a {{art.fprixuni()}}</div>
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(gp2, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(gp2, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(gp2, $index, $event)'><div /></button>
+        </div>
     </div>
-</div>
 </script>
 
 <script type="text/ng-template" id='tmplTypeBouteille.html'>
-<div class='group-title'>
-    <div class='toggle-handler' ng-click='toggleGroup(gp2, $event)'></div>
-    <input type='text' ng-model='gp2.description' />
-    <div class='group-buttons'>
-        <button class='moveGroupUp' ng-click='moveGroupUp(gp1, $index, $event)'><div /></button
-        ><button class='moveGroupDown' ng-click='moveGroupDown(gp1, $index, $event)'><div /></button
-        ><button class='deleteGroup' ng-click='deleteGroup(gp1, $index, $event)'><div /></button>
+    <div class='group-title'>
+        <div class='toggle-handler' ng-click='toggleGroup(gp2, $event)'></div>
+        <input type='text' ng-model='gp2.description' />
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(gp1, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(gp1, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(gp1, $index, $event)'><div /></button>
+        </div>
     </div>
-</div>
-<div class='group-body'>
-    <div class='groups'>
-        <article class='group' ng-repeat='art in gp2.children'></article>
+    <div class='group-body'>
+        <div class='groups'>
+            <article class='group' ng-repeat='art in gp2.children'></article>
+        </div>
+        <div class='group-buttons'>
+            <button class='appendGroup' ng-click='appendArticle(gp2, $event)'><div /></button>
+        </div>
+        <div style='clear: both' />
     </div>
-    <div class='group-buttons'>
-        <button class='appendGroup' ng-click='appendArticle(gp2, $event)'><div /></button>
-    </div>
-    <div style='clear: both' />
-</div>
 </script>
 
 <script type="text/ng-template" id='tmplCouleurVin.html'>
-<div class='group-title'>
-    <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'></div>
-    <input type='text' ng-model='gp1.description' />
-    <div class='group-buttons'>
-        <button class='moveGroupUp' ng-click='moveGroupUp(vins, $index, $event)'><div /></button
-        ><button class='moveGroupDown' ng-click='moveGroupDown(vins, $index, $event)'><div /></button
-        ><button class='deleteGroup' ng-click='deleteGroup(vins, $index, $event)'><div /></button>
+    <div class='group-title'>
+        <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'></div>
+        <input type='text' ng-model='gp1.description' />
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(vins, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(vins, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(vins, $index, $event)'><div /></button>
+        </div>
     </div>
-</div>
-<div class='group-body'>
-    <div class='groups'>
-        <type-bouteille class='group' ng-repeat='gp2 in gp1.children'></type-bouteille>
+    <div class='group-body'>
+        <div class='groups'>
+            <type-bouteille class='group' ng-repeat='gp2 in gp1.children'></type-bouteille>
+        </div>
+        <div class='group-buttons'>
+            <button class='appendGroup' ng-click='appendGroup(gp1, $event)'><div /></button>
+        </div>
+        <div style='clear: both' />
     </div>
-    <div class='group-buttons'>
-        <button class='appendGroup' ng-click='appendGroup(gp1, $event)'><div /></button>
-    </div>
-    <div style='clear: both' />
-</div>
 </script>
+
+<div class="accordion" wix-ctrl="Accordion">
+    <div wix-scroll="{height:100}">
+        <div class="acc-pane">
+            <h3>General Settings: </h3>
+            <div class="acc-content">
+                blablabla
+            </div>
+        </div>
+        <div class="acc-pane">
+            <h3>Color Settings: </h3>
+            <div class="acc-content">
+                color settings
+            </div>
+        </div>
+    </div>
+</div>
 
 <div ng-controller="navCtrl"><div ng-include="'navigation.html'"></div></div>
 <form id='formsettings' ng-controller="settingsCtrl">
@@ -179,11 +228,32 @@ article .attribute {
 
 </form>
 </div>
+<!-- jQuery Dependency -->
+<script src="http://sslstatic.wix.com/services/js-sdk/1.40.0/js/Wix.js"></script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<!-- Wix SDK -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+
+<script type="text/javascript" src="js/ui-lib.min.js"></script>
+
+<script src="js/VinsModel.js"></script>
 
 <script>
 var app = angular.module("settingsApp", []);
 app.controller("navCtrl", function($scope) {});
 app.controller("settingsCtrl", function($scope, $http, $compile) {
+
+    Wix.UI.initialize({
+      numOfImages: 10,
+      isIconShown: true,
+      imageVisibility: 'show',
+      imagesToSync: 0,
+      imageMeta: true,
+      imageAlt: false,
+      imageLink: false
+    });
 
     $http({method: 'GET', url: 'articles2.json'}).
         success(function(data, status, headers, config) {
@@ -311,6 +381,7 @@ app.directive('article', function(){
     
     return directive;
 });
+
 </script>
 
 </body>	
