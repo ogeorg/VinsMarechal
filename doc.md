@@ -13,7 +13,9 @@ de base gratuit, avec quelques limitations.
 
 ## Analyse
 
-### Use cases
+### Cas d'utilisation
+
+![Cas d'utilisation][usecases]
 
 
 ## Design
@@ -35,3 +37,4 @@ settings/vins
 + POST: sauver les données du formulaire de gestion des vins
 
 
+[usecases]: http://yuml.me/7e28d3a6 "Cas d'utilisation"
