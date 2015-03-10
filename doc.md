@@ -1,4 +1,4 @@
-== Requisitos ==
+## Requisitos
 
 NectarDesign fait un site web pour Vins Maréchal. La plateforme web est Wix. 
 
@@ -11,14 +11,14 @@ Cette application aura plusieurs "widgets", ou composants:
 Cette application est hébergée sur un serveur tiers. Je propose heroku, car il y existe un plan 
 de base gratuit, avec quelques limitations.
 
-== Analyse ==
+## Analyse
 
-=== Use cases ===
+### Use cases
 
 
-== Design ==
+## Design
 
-=== API ===
+### API
 
 web/commande: 
 + GET: montre le formulaire. Il s'agit en fait d'un template, les vins se chargent via ajax depuis la page
