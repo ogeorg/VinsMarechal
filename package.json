@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "Formulaire de commande de vins, avec page d'actualisation de formulaire (settings)",
-  "-main": "server.js",
-  "main": "testdb/web.js",
+  "main": "server.js",
   "repository": "",
   "author": "Oliveir Georg <oliviergeorg@gmail.com>",
   "dependencies": {
