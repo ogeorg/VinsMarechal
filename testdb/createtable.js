@@ -4,7 +4,7 @@ var pg = require('pg'),
     query
 
 // Un client pg se connecte au serveur pg
-client = new pg.Client(connectionString);
+client = new pg.Client(connStr);
 client.connect();
 
 // Query de création d'une table dans la BD
