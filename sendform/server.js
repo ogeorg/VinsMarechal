@@ -52,7 +52,8 @@ app.get('/commande', function (req, res) {
  * Un json de confirmation est renvoyé
  */
 app.post('/commande', function (req, res) {
-    // res.json({"done":"yes", "total": total});
+    console.log(">> post commande")
+    res.json({"success":"true", "message": "Commande enregistrée", "id": 3});
 });
 
 /*

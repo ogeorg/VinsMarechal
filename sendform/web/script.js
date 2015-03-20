@@ -32,8 +32,36 @@ scotchApp.controller('mainController', function($scope) {
     $scope.message = 'Everyone come and see how good I look!';
 });
 
-scotchApp.controller('formController', function($scope) {
-    $scope.message = 'Look! I am the form.';
+scotchApp.controller('formController', function($scope, $http) {
+    $scope.formdata = {
+        id: undefined,
+        table: 10,
+        entree: 'Soupe',
+        principal: 'Lasagne'
+    };
+    $scope.errorMessage = "";
+    $scope.processForm = function() {
+        $http({
+            method  : 'POST',
+            url     : '/commande',
+            // pass in data as strings
+            data    : $.param($scope.formdata),  
+            // set the headers so angular passing info as form data (not request payload)
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  
+        })
+        .success(function(data) {
+            console.log(data);
+            if (!data.success) {
+                // if not successful, bind errors to error variables
+                $scope.errorName = data.errors.name;
+                $scope.errorSuperhero = data.errors.superheroAlias;
+            } else {
+                // if successful, bind success message to message
+                $scope.message = data.message;
+                $scope.formdata.id = data.id;
+            }
+        });
+    };
 });
 
 scotchApp.controller('listController', function($scope) {

@@ -1,7 +1,39 @@
 <h2>Commande d'un menu</h2>
 
-<form>
+<form ng-submit="processForm()">
+<input type='hidden' name='id' ng-model="formdata.id" />
 
-{{ message }}
+<table>
+    <tr>
+        <th>Table</th>
+        <td><input type='text' name='table' ng-model="formdata.table" placeholder='nº de la table' /></td>
+    </tr>
+    <tr>
+        <th>Entrée</th>
+        <td>
+            <select name='entree' ng-model="formdata.entree">
+                <option>Salade</option>
+                <option>Soupe</option>
+                <option>Jambon</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>Plat principal</th>
+        <td>
+            <select name='principal' ng-model="formdata.principal">
+                <option>Steak frites</option>
+                <option>Poisson légumes</option>
+                <option>Lasagne</option>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><button type="submit">Commander</button></td>
+    </tr>
+</table>
 
+<span style='color: #f00'>{{errorMessage}}</span>
+<span style='color: #080'>{{message}}</span>
 </form>
