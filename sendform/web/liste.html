@@ -1,5 +1,7 @@
 <h2>Liste de menus</h2>
 
+<button ng-click='sendConfirmation()'>Envoyer les menus par mail</button>
+
 <table border='1'>
     <thead>
         <tr>
@@ -16,7 +18,10 @@
             <td>{{menu.notable}}</td>
             <td>{{menu.entree}}</td>
             <td>{{menu.principal}}</td>
-            <td>[<a href='#form/{{menu.id}}'>editer</a>]</td>
+            <td>
+                [<a href='#form/{{menu.id}}'>editer</a>]
+                [<a ng-click='deleteUser(menu.id)'>éliminer</a>]
+            </td>
         </tr>
     </tbody>
     <tfoot>

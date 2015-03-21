@@ -37,19 +37,16 @@ scotchApp.controller('formController', function($scope, $http, $routeParams) {
     if (id) {
         $http({method: 'GET', url: '/commande/'+id})
         .success(function(data, status, headers, config) {
-            $scope.formdata = data;
-            $scope.message = 'Liste des menus bien chargée';
+            if (data.success) {
+                $scope.formdata = data.menu;
+                $scope.message = 'Liste des menus bien chargée';
+            } else {
+                $scope.errorMessage = data.error;
+            }
         }).error(function(data, status, headers, config) {
             $scope.errorMessage = "Impossible d'obtenir les menus";
         });
-
     }
-    $scope.formdata = {
-        id: $routeParams.id,
-        notable: 10,
-        entree: 'Soupe',
-        principal: 'Lasagne'
-    };
     $scope.errorMessage = "";
     $scope.processForm = function() {
         $http({
@@ -62,27 +59,72 @@ scotchApp.controller('formController', function($scope, $http, $routeParams) {
         })
         .success(function(data) {
             console.log(data);
-            if (!data.success) {
-                // if not successful, bind errors to error variables
-                $scope.errorMessage = data.message;
-                $scope.message = "";
-            } else {
-                // if successful, bind success message to message
+            if (data.success) {
+                // if successful, bind success message to message                
                 $scope.errorMessage = "";
                 $scope.message = data.message;
                 $scope.formdata.id = data.id;
+            } else {
+                // if not successful, bind errors to error variables
+                $scope.errorMessage = data.error;
+                $scope.message = "";
             }
         });
     };
 });
 
 scotchApp.controller('listController', function($scope, $http) {
-   $http({method: 'GET', url: '/commandes'}).
+    $http({method: 'GET', url: '/commandes'}).
         success(function(data, status, headers, config) {
-            $scope.menus = data;
-            $scope.message = 'Liste of menus bien chargée';
+            if (data.success) {
+                $scope.menus = data.menus;
+                $scope.message = 'Liste of menus bien chargée';
+            } else {
+                $scope.errorMessage = data.error;
+            }
         }).error(function(data, status, headers, config) {
             $scope.errorMessage = "Impossible d'obtenir les menus";
         });
+
+    $scope.deleteUser = function(id) {
+        $http({
+            method  : 'DELETE',
+            url     : '/commande/' + id,
+        })
+        .success(function(data) {
+            console.log(data);
+            if (data.success) {
+                // if successful, bind success message to message                
+                $scope.errorMessage = "";
+                $scope.message = "Menu " + id + " éliminé";
+                for(var i=0; i<$scope.menus.length; i++) {
+                    var menu = $scope.menus[i];
+                    if (menu.id == id) {
+                        $scope.menus.splice(i, 1);
+                    }
+                } 
+            } else {
+                // if not successful, bind errors to error variables
+                $scope.errorMessage = data.error;
+                $scope.message = "";
+            }
+        });
+    };
+
+    $scope.sendConfirmation = function() {
+       $http({method: 'GET', url: '/sendconfirmation'}).
+            success(function(data, status, headers, config) {
+                if (data.success) {
+                    $scope.message = 'Mails envoyés';
+                    $scope.errorMessage = "";
+                } else {
+                    $scope.message = "";
+                    $scope.errorMessage = data.error;
+                }
+            }).error(function(data, status, headers, config) {
+                $scope.message = "";
+                $scope.errorMessage = "Impossible d'envoyer les mails";
+            });
+        };
 });
 

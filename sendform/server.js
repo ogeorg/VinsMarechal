@@ -1,6 +1,16 @@
+// http://stackoverflow.com/questions/202605/repeat-string-javascript?lq=1
+String.prototype.repeat = function(count) {
+    if (count < 1) return '';
+    var result = '', pattern = this.valueOf();
+    while (count > 1) {
+        if (count & 1) result += pattern;
+        count >>= 1, pattern += pattern;
+    }
+    return result + pattern;
+};
+
 // http://forum.codecall.net/topic/74559-the-nodejs-part6-form-programming/
 // http://stackoverflow.com/questions/15427220/how-to-handle-post-request-in-node-js
-
 var express = require('express'),
     logger = require('morgan'),
     http = require('http'),
@@ -10,10 +20,8 @@ var express = require('express'),
     url = require('url'),
     bodyParser = require('body-parser');
 
-var pg = require('pg'),
-    connStr = process.env.DATABASE_URL || 'pg://olivier:olivier@localhost:5432/olivier',
-    client = new pg.Client(connStr);
-client.connect();
+
+var pgMenus = require('./pgMenus');
 
 var app = express();
 
@@ -51,22 +59,37 @@ app.get('/liste.html', function (req, res) {
 app.get('/commande/:id', function (req, res) {
     var id = req.params.id;
     console.log("Getting menu for id " + id);
-    if (id) {
-        client.query(
-            "SELECT * FROM commandesmenus WHERE id=$1",
-            [id],
-            function(error, result) {
-                if (error) {
-                    console.log(error);
-                    return res.send(500);
-                }
-                if (result.rows.length == 0) return res.json({});
-                var row = result.rows[0];
-                return res.json(row);
+    pgMenus.getMenu(id, 
+        function(row) {
+            return res.json({
+                success: true,
+                menu: row
             });
-    } else {
-        return res.send(500);
-    }
+        }, function(error) {
+            return res.json({
+                success: false,
+                error: error
+            });
+        });
+});
+
+/*
+ * Envoie les données d'une commande en json
+ */
+app.delete('/commande/:id', function (req, res) {
+    var id = req.params.id;
+    console.log("Deleting menu for id " + id);
+    pgMenus.deleteMenu(id, 
+        function(row) {
+            return res.json({
+                success: true
+            });
+        }, function(error) {
+            return res.json({
+                success: false,
+                error: error
+            });
+        });
 });
 
 /*
@@ -75,46 +98,30 @@ app.get('/commande/:id', function (req, res) {
  */
 app.post('/commande', function (req, res) {
     var data = req.body;
-    console.log(data);
-    var message = "";
     var date = new Date();
-    var success = false;
     if (data.id) {
-        client.query(
-            "UPDATE commandesmenus SET notable=$1, entree=$2, principal=$3 WHERE id=$4",
-            [data.notable, data.entree, data.principal, data.id],
-            function(err, result) {
-                if (err) {
-                    success = false;
-                    message = err;
-                    console.log(err);
-                } else {
-                    success = true;
-                    message = "Commande modifiée à " + date;
-                    console.log('row modified with id: ' + data.id);
-                }
-
-                console.log(">> post commande: success=" + success );
-                res.json({"success":success, "message": message, "id": data.id});
+        pgMenus.updateMenu(data,
+            function() {
+                res.json({
+                    success: true, 
+                    message: "Commande modifiée à " + date, 
+                    id: data.id});
+            }, function(error) {
+                res.json({
+                    success: false, 
+                    error: error});
             });
     } else {
-        client.query(
-            "INSERT into commandesmenus (notable, entree, principal) VALUES($1, $2, $3) RETURNING id",
-            [data.notable, data.entree, data.principal],
-            function(err, result) {
-                if (err) {
-                    success = false;
-                    message = err;
-                    console.log(err);
-                } else {
-                    success = true;
-                    data.id = result.rows[0].id;
-                    message = "Commande enregistrée à " + date;
-                    console.log('row inserted with id: ' + data.id);
-                }
-
-                console.log(">> post commande: success=" + success );
-                res.json({"success":success, "message": message, "id": data.id});
+        pgMenus.insertMenu(data,
+            function(newId) {
+                res.json({
+                    success: true, 
+                    message: "Commande ajoutée à " + date, 
+                    id: newId});
+            }, function(error) {
+                res.json({
+                    success: false, 
+                    error: error});
             });
     }
 });
@@ -123,21 +130,117 @@ app.post('/commande', function (req, res) {
  * Envoie les données d'une commande en json
  */
 app.get('/commandes', function (req, res) {
-    client.query(
-        "SELECT * FROM commandesmenus",
-        function(error, result){
-            if (error) return res.send(500);
-            if (result.rows.length == 0) return res.json(result.rows);
-            result.rows.map(function(row){
-                try {
-                    row.data = JSON.parse(row.data);
-                } catch (e) {
-                    row.data = null;
-                }
-                return row;
+    pgMenus.getMenus(
+        function(rows) {
+            res.json({
+                success: true, 
+                menus: rows});
+        }, function(error) {
+            res.json({
+                success: false,
+                error: error
             });
-            res.json(result.rows);
         });
+});
+
+var mailer = require("../js/mailer")
+        .use(process.env.EMAIL_SERVICE)
+        .config(process.env.EMAIL_USER, process.env.EMAIL_PASS);
+
+app.get('/sendconfirmation', function(req, res) {
+    /*
+    Obtenir les menus. Quand on les obtient:
+        + Si ok: on formate et on envoie le mail. Quand on reçoit la réponse:
+            + Si ok: on envoie res={success=true}
+            + Si ko: on envoie res={success=false}
+        + Si ko: on envoie res={success=false}
+    */
+    var subject = "Liste des menus";
+    var options = {
+       from: "My Name <me@example.com>", // sender address
+       to: "Your Name <oliviergeorg@gmail.com>", // comma separated list of receivers
+       subject: subject, // Subject line
+       text: undefined, // plaintext body
+       html: undefined, // html body
+    };
+        var titres = {id:"Id", notable:"Nº table", entree:"Entrée", principal:"Plat principal"};
+    var getLineText= function(menu, lens) {
+        var pad = lens.id - (""+menu.id).length;
+        var text = " ".repeat(pad) + menu.id + " ";
+        pad = lens.notable - (""+menu.notable).length;
+        text += " ".repeat(pad) + menu.notable + " ";
+        pad = lens.entree - menu.entree.length;
+        text += " ".repeat(pad) + menu.entree + " ";
+        pad = lens.principal - menu.principal.length;
+        text += " ".repeat(pad) + menu.principal + " ";
+        return text;
+    };
+    var getLineHtml = function(menu) {
+        var html = "<tr>";
+        html += "<td>" + menu.id + "</td>";
+        html += "<td>" + menu.notable + "</td>";
+        html += "<td>" + menu.entree + "</td>";
+        html += "<td>" + menu.principal + "</td>";
+        html += "</tr>\n";
+        return html;
+    };
+    var onMenusOk = function(menus) {
+        // On calcule les largeurs des colonnes, en commençant par les titres de colonnes
+        var lens = Object.keys(titres).reduce(function(lens, t) {lens[t] = titres[t].length; return lens;}, {});
+        lens = menus.reduce(function(lens, menu) {
+            var l = (""+menu.id).length;
+            if (lens.id < l) lens.id = l;
+            l = (""+menu.notable).length;
+            if (lens.notable < l) lens.notable = l;
+            l = menu.entree.length;
+            if (lens.entree < l) lens.entree = l;
+            l = menu.principal.length;
+            if (lens.principal < l) lens.principal = l;
+            return lens;
+        }, lens);
+
+        // Titre principal du mail
+        var text = "== "+subject+" ==\n";
+        var html = "<h1>"+subject+"</h1><table>\n";
+
+        // Header de la table
+        text += getLineText(titres, lens) + "\n";
+        html += getLineHtml(titres) + "\n";
+
+        // Body de la table
+        for(var m=0; m<menus.length; m++) {
+            var menu = menus[m];
+            text += getLineText(menu, lens) + "\n";
+            html += getLineHtml(menu) + "\n";
+        }
+        html += "</table>";
+        console.log(text);
+        console.log(html);
+
+        options.text = text;
+        options.html = html;
+        mailer.sendMail(options, function(error, info){
+           if(error){
+                res.json({
+                    success: false,
+                    error: error
+                });
+           } else {
+                res.json({
+                    success: true,
+                    message: "Mail envoyé"
+                });
+           }
+        });
+
+    };
+    var onMenusKo = function(error) {
+        res.json({
+            success: false,
+            error: error
+        });
+    };
+    pgMenus.getMenus(onMenusOk, onMenusKo);
 });
 
 /* Serves /web/client.js as /client.js  */
