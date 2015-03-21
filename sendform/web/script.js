@@ -14,7 +14,7 @@ scotchApp.config(function($routeProvider) {
         })
 
         // route for the about page
-        .when('/form', {
+        .when('/form/:id?', {
             templateUrl : '/formulaire.html',
             controller  : 'formController'
         })
@@ -29,13 +29,24 @@ scotchApp.config(function($routeProvider) {
 // create the controller and inject Angular's $scope
 scotchApp.controller('mainController', function($scope) {
     // create a message to display in our view
-    $scope.message = 'Everyone come and see how good I look!';
+    // $scope.message = 'Everyone come and see how good I look!';
 });
 
-scotchApp.controller('formController', function($scope, $http) {
+scotchApp.controller('formController', function($scope, $http, $routeParams) {
+    var id = $routeParams.id;
+    if (id) {
+        $http({method: 'GET', url: '/commande/'+id})
+        .success(function(data, status, headers, config) {
+            $scope.formdata = data;
+            $scope.message = 'Liste des menus bien chargée';
+        }).error(function(data, status, headers, config) {
+            $scope.errorMessage = "Impossible d'obtenir les menus";
+        });
+
+    }
     $scope.formdata = {
-        id: undefined,
-        table: 10,
+        id: $routeParams.id,
+        notable: 10,
         entree: 'Soupe',
         principal: 'Lasagne'
     };
@@ -53,10 +64,11 @@ scotchApp.controller('formController', function($scope, $http) {
             console.log(data);
             if (!data.success) {
                 // if not successful, bind errors to error variables
-                $scope.errorName = data.errors.name;
-                $scope.errorSuperhero = data.errors.superheroAlias;
+                $scope.errorMessage = data.message;
+                $scope.message = "";
             } else {
                 // if successful, bind success message to message
+                $scope.errorMessage = "";
                 $scope.message = data.message;
                 $scope.formdata.id = data.id;
             }
@@ -64,7 +76,13 @@ scotchApp.controller('formController', function($scope, $http) {
     };
 });
 
-scotchApp.controller('listController', function($scope) {
-    $scope.message = 'List of menus.';
+scotchApp.controller('listController', function($scope, $http) {
+   $http({method: 'GET', url: '/commandes'}).
+        success(function(data, status, headers, config) {
+            $scope.menus = data;
+            $scope.message = 'Liste of menus bien chargée';
+        }).error(function(data, status, headers, config) {
+            $scope.errorMessage = "Impossible d'obtenir les menus";
+        });
 });
 

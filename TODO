@@ -14,4 +14,19 @@ http://stackoverflow.com/questions/22825706/angularjs-load-config-on-app-start
     + Pour chaque groupe: une description et une liste d'articles (Item)
     + Pour chaque article: une description et un prix unitaire
 
-+ Où héberger l'application
+
+
++ Envoyer un mail depuis heroku:
+    fait:
+        + Créer une adresse mail sur openmailbox.org
+        + Créer une app qui envoie un mail
+        + Configurer le mail pour l'envoyer depuis openmailbox.
+        + Créer un formulaire en node.js
+        + garder les données "de commande" en json dans une table.
+    à faire:
+        + Amplifier le formulaire pour avoir certaines données
+            - email de client
+            - menu: table, entrée, plat principal
+            - menu: date
+        + envoyer les données dans un mail
+    

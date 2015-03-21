@@ -1,7 +1,31 @@
 <h2>Liste de menus</h2>
 
-<form>
+<table border='1'>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Table</th>
+            <th>Entrée</th>
+            <th>Plat principal</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-ng-repeat="menu in menus">
+            <td>{{menu.id}}</td>
+            <td>{{menu.notable}}</td>
+            <td>{{menu.entree}}</td>
+            <td>{{menu.principal}}</td>
+            <td>[<a href='#form/{{menu.id}}'>editer</a>]</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4"></td>
+            <td>[<a href='#form/'>nouveau</a>]</td>
+        </tr>        
+    </tfoot>
+</table>
 
-{{ message }}
-
-</form>
+<span style='color: #f00'>{{errorMessage}}</span>
+<span style='color: #080'>{{message}}</span>

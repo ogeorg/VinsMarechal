@@ -20,6 +20,20 @@ Je veux faire une petite application web pour envoyer le résultat d'un formulai
 
 Quand on envoye la commande, on passe à la liste
 
+### Base de données
+
+faire un script qui a un certain nombre de commande, dont
++ créer la table
++ recréer la table
++ éliminer la table
++ faire un dump de la table
+
+Comment éxécuter:
+    
+    node sendform/execdb.js mon_script_pg
+
+Cela execute le script sendform/sqls/mon_script_pg.sql
+
 ### Liste des commandes
 
 Liste des commandes par ordre chronologique inverse
@@ -42,7 +56,7 @@ Renvoie le formulaire
 
 Renvoie la page de liste
 
-### GET /commande
+### GET /commande/:id
 
 Envoie les données d'une commande en json
 
