@@ -29,7 +29,8 @@ var app = express();
 // app.use(express.logger({stream: logfile}));
 
 app.use(logger('dev'));
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 /*
  * Montre la page principale
