@@ -1,5 +1,5 @@
 var pg = require('pg'),
-    connStr = process.env.DATABASE_URL || 'pg://olivier:olivier@localhost:5432/olivier',
+    connStr = process.env.DATABASE_URL,
     client = new pg.Client(connStr);
 client.connect();
 
