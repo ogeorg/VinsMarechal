@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base target="_parent" />
+  <title>Commande de vins</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <!-- endbuild -->
+<style>
+table {
+  border-collapse: collapse;
+}
+table td, table th {
+  border: 1px solid black;
+  vertical-align: baseline;
+}
+#bodyContainer {
+    overflow-y: scroll;
+}
+</style>
+<script type="text/javascript" src="//sslstatic.wix.com/services/js-sdk/1.43.0/js/Wix.js"></script>
+</head>
+<body data-ng-app="settingsApp">
+<div id='bodyContainer'>
+
+<h1>Settings <%=name%></h1>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="wix.js"></script>
+
+<div ng-controller="settingsCtrl" >
+    <form>
+        Name: <input type="text" name="name" ng-model="settings.name">
+    </form>
+
+    <div>
+        Le nouveau nom sera <b>{{settings.name}}</b>
+    </div>
+
+    <button ng-click="settings.submit ()">Submit Form</button>
+
+    <hr />
+    <table>
+      <tr>
+        <th>SiteInfo</th>
+        <td>
+          <li ng-repeat="(ikey, ivalue) in wix.SiteInfo">{{ikey}}: {{ivalue}}</li>
+        </td>
+      </tr>
+      <tr>
+        <th>SitePages</th>
+        <td>
+          <li ng-repeat="page in wix.SitePages">{{page.id}}: {{page.title}}</li>
+        </td>
+      </tr>
+      <tr><th>CacheKiller</th><td>{{wix.CacheKiller}}</td></tr>
+      <tr><th>CompId</th><td>{{wix.CompId}}</td></tr>
+      <tr><th>DemoMode</th><td>{{wix.DemoMode}}</td></tr>
+      <tr><th>DeviceType</th><td>{{wix.DeviceType}}</td></tr>
+      <tr><th>InstanceId</th><td>{{wix.InstanceId}}</td></tr>
+      <tr><th>IpAndPort</th><td>{{wix.IpAndPort}}</td></tr>
+      <tr><th>OrigCompId</th><td>{{wix.OrigCompId}}</td></tr>
+      <tr><th>Permissions</th><td>{{wix.Permissions}}</td></tr>
+      <tr><th>SectionUrl</th><td>{{}}</td></tr>
+      <tr><th>SignDate</th><td>{{wix.SignDate}}</td></tr>
+      <tr><th>Target</th><td>{{wix.Target}}</td></tr>
+      <tr><th>Uid</th><td>{{wix.Uid}}</td></tr>
+      <tr><th>ViewMode</th><td>{{wix.ViewMode}}</td></tr>
+      <tr><th>Width</th><td>{{wix.Width}}</td></tr>
+    </table>
+    <hr />
+</div>
+</div>
+
+<script>
+var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+$('#bodyContainer').css({'height': h + 'px'});
+
+var app = angular.module("settingsApp", []);
+app.controller("settingsCtrl", function($scope, $http) {
+  $scope.settings = {};
+  $scope.settings.name = "<%= name %>";
+  $scope.wix = {};
+
+  Wix.Settings.getSiteInfo(function(siteInfo) {
+    $scope.$apply(function() {
+      $scope.wix.SiteInfo = siteInfo;
+    });
+  });
+
+  Wix.Settings.getSitePages(function(sitePages) {
+    $scope.$apply(function() {
+      $scope.wix.SitePages = sitePages;
+    });
+  });
+
+  $scope.wix.CacheKiller = Wix.Utils.getCacheKiller();
+  $scope.wix.CompId = Wix.Utils.getCompId();
+  $scope.wix.DemoMode = Wix.Utils.getDemoMode();
+  $scope.wix.DeviceType = Wix.Utils.getDeviceType();
+  $scope.wix.InstanceId = Wix.Utils.getInstanceId();
+  $scope.wix.IpAndPort = Wix.Utils.getIpAndPort();
+  $scope.wix.OrigCompId = Wix.Utils.getOrigCompId();
+  $scope.wix.Permissions = Wix.Utils.getPermissions();
+// <private, static> getSectionUrl(sectionId, callback) -> {String}
+  $scope.wix.SignDate = Wix.Utils.getSignDate();
+  $scope.wix.Target = Wix.Utils.getTarget();
+  $scope.wix.Uid = Wix.Utils.getUid();
+  $scope.wix.ViewMode = Wix.Utils.getViewMode();
+  $scope.wix.Width = Wix.Utils.getWidth();
+
+  $scope.settings.submit = function() {
+    console.log("--> Submitting form");
+    var data = {
+      name : $scope.settings.name
+    };
+
+    var responsePromise = $http.post("/testConnection/data", data, {});
+    responsePromise.success(function(dataFromServer, status, headers, config) {
+      console.log(dataFromServer);
+      Wix.Settings.refreshApp({param1: "value1", param2: "value2"})
+    });
+    responsePromise.error(function(data, status, headers, config) {
+      alert("Submitting form failed!");
+    });
+  }
+});
+</script>
+
+</body>
+</html>
