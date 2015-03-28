@@ -20,11 +20,11 @@ var app = express();
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use('/testConnection', express.static(__dirname));  // Serves /testConnection/client.js as ./client.js 
+app.use('/testConnection', express.static(__dirname + "/testConnection"));  // Serves /testConnection/client.js as ./client.js 
 
 app.set('view options', { layout: false }); 
 app.set('view engine', 'ejs'); 
-app.set('views', __dirname);
+app.set('views', __dirname + "/testConnection");
 
 
 
