@@ -9,6 +9,9 @@ var bodyParser = require('body-parser');
 var routes = require('./testConnection/routes.js');
 var Authentication = require('./testConnection/authentication');
 
+console.log("starting app...");
+console.log(process.env);
+
 if (process.env.IP === undefined) {
     require('dotenv').load();
 }
