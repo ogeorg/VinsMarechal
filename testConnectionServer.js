@@ -6,8 +6,8 @@ var logger = require('morgan');
 // var url = require('url');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes.js');
-var Authentication = require('./authentication');
+var routes = require('./testConnection/routes.js');
+var Authentication = require('./testConnection/authentication');
 
 if (process.env.IP === undefined) {
     require('dotenv').load();
