@@ -6,7 +6,7 @@ var logger = require('morgan');
 // var url = require('url');
 var bodyParser = require('body-parser');
 
-var routes = require('./testConnection/routesTxt.js');
+var routes = require('./testConnection/routesPg.js');
 var Authentication = require('./testConnection/authentication');
 
 console.log("starting app...");
@@ -25,9 +25,6 @@ app.use('/testConnection', express.static(__dirname + "/testConnection"));  // S
 app.set('view options', { layout: false }); 
 app.set('view engine', 'ejs'); 
 app.set('views', __dirname + "/testConnection");
-
-
-
 
 // API
 app.post('/testConnection/data', routes.updateData);

@@ -15,12 +15,12 @@ function _selectData(compId, onSuccess, onError) {
             } else {
                 var rows = result.rows;
                 if (rows.length == 0) {
-                    onError({command: "SELECT", message: "no row found"});
+                    onError({command: "SELECT", rowCount: 0, message: "no row found"});
                 } else if (rows.length == 1) {
                     var row = rows[0];
                     onSuccess(row.data);
                 } else {
-                    onError({command: "SELECT", message: "more than 1 row found"});
+                    onError({command: "SELECT", rowCount: rows.length, message: "more than 1 row found"});
                 }
             }
         });
@@ -33,7 +33,7 @@ function _insertData(compId, data, onSuccess, onError)
         [compId, data],
         function(error, result) {
             if (error) {
-                onError(error);
+                onError({command: "INSERT", rowCount: 0, message: error});
             } else {
                 // console.log("INSERT:", result);
                 /*
@@ -48,11 +48,7 @@ function _insertData(compId, data, onSuccess, onError)
                     rowAsArray: false,
                     _getTypeParser: [Function] }
                 */
-                if (result.rowCount == 1) {
-                    onSuccess(result.command);
-                } else {
-                    onError({command: "INSERT", message: "could not insert data"});
-                }
+                onSuccess({command: "INSERT", rowCount: 1});
             }
         });
 }
@@ -63,7 +59,7 @@ function _updateDataOrInsert(compId, data, onSuccess, onError)
         [compId, data],
         function(error, result) {
             if (error) {
-                onError({command: "UPDATE", message: error});
+                onError({command: "UPDATE", rowCount: 0, message: error});
             } else {
                 /*
                 result { 
@@ -77,10 +73,12 @@ function _updateDataOrInsert(compId, data, onSuccess, onError)
                     rowAsArray: false,
                     _getTypeParser: [Function] }
                 */
-                if (result.rowCount == 1) {
-                    onSuccess(result.command);
-                } else {
+                if (result.rowCount == 0) {
                     _insertData(compId, data, onSuccess, onError);
+                } else if (result.rowCount == 1) {
+                    onSuccess({command: "UPDATE", rowCount: 1});
+                } else {
+                    onError({command: "UPDATE", rowCount: result.rowCount, message: "More than one row updated"});
                 }
             }
         });
@@ -108,11 +106,11 @@ function _deleteData(compId, onSuccess, onError)
                     _getTypeParser: [Function] }
                 */
                 if (result.rowCount == 0) {
-                    onSuccess({command: result.command, rowCount: 0, message: "No row deleted"});
+                    onSuccess({command: "DELETE", rowCount: 0, message: "No row deleted"});
                 } else if (result.rowCount == 1) {
-                    onSuccess({command: result.command, rowCount: 1, message: "Row deleted"});
+                    onSuccess({command: "DELETE", rowCount: 1, message: "Row deleted"});
                 } else {
-                    onError({command: result.command, rowCount: result.rowCount, message: "More than one row deleted"});
+                    onError({command: "DELETE", rowCount: result.rowCount, message: "More than one row deleted"});
                 }
             }
         });
@@ -120,26 +118,35 @@ function _deleteData(compId, onSuccess, onError)
 }
 
 /**
- * 
+ * Obtient les données associées à un widget
+ *
  * @param compId id du widget
- * @param onSuccess == function(data)
- * @param onError == function(errMsg)
+ * @param function onSuccess(data), avec data = {name: <name>, age: <age>}
+ * @param function onError(error), avec error = {command: "SELECT", rowCount: <nbRows>, message: <message d'erreur>} 
  */
 function getData(compId, onSuccess, onError) 
 {
     if (compId) {
         var data = _selectData(compId, onSuccess, onError);
     } else {
-        onError("id du composant non spécifié");
+        onError({command: "getData", rowCount:0, message: "id du composant non spécifié"});
     }
 }
 
+/**
+ * Insert des données pour un widget
+ * 
+ * @param compId id du widget
+ * @param data les données
+ * @param function onSuccess(result), avec result = {command: "UPDATE"|"INSERT"} 
+ * @param function onError(error), avec error = {command: "UPDATE"|"INSERT", rowCount: <nbRows>, message: <message d'erreur>} 
+ */
 function setData(compId, data, onSuccess, onError)
 {
     if (compId) {
         var data = _updateDataOrInsert(compId, data, onSuccess, onError);
     } else {
-        onError({command: "setData", message: "id du composant non spécifié"});
+        onError({command: "setData", rowCount:0, message: "id du composant non spécifié"});
     }
 }
 
@@ -148,7 +155,7 @@ function removeData(compId, onSuccess, onError)
     if (compId) {
         var data = _deleteData(compId, onSuccess, onError);
     } else {
-        onError({command: "removeData", message: "id du composant non spécifié"});
+        onError({command: "removeData", rowCount:0, message: "id du composant non spécifié"});
     }
 }
 
