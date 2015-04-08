@@ -3,7 +3,7 @@ var fs = require('fs');
 // var qs = require('querystring');
 
 exports.appWidget = function (req, res) {
-    console.log("Entering appWidget");
+    console.log("Entering appWidget");    
     fs.readFile(__dirname + "/data.txt", function (err, data) {
         if (err) {
             console.log("Error reading data.txt");

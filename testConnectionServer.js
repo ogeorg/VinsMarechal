@@ -6,7 +6,7 @@ var logger = require('morgan');
 // var url = require('url');
 var bodyParser = require('body-parser');
 
-var routes = require('./testConnection/routes.js');
+var routes = require('./testConnection/routesTxt.js');
 var Authentication = require('./testConnection/authentication');
 
 console.log("starting app...");
