@@ -164,7 +164,7 @@ app.get('/sendconfirmation', function(req, res) {
        text: undefined, // plaintext body
        html: undefined, // html body
     };
-        var titres = {id:"Id", notable:"Nº table", entree:"Entrée", principal:"Plat principal"};
+    var titres = {id:"Id", notable:"Nº table", entree:"Entrée", principal:"Plat principal"};
     var getLineText= function(menu, lens) {
         var pad = lens.id - (""+menu.id).length;
         var text = " ".repeat(pad) + menu.id + " ";
