@@ -1,0 +1,97 @@
+<html>
+<head>
+<meta charset="utf-8">
+    <xlink rel="stylesheet" href="css/ui-lib.min.css"/>
+    <link rel="stylesheet" href="css/vins.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <!-- Wix SDK -->
+    <script src="http://sslstatic.wix.com/services/js-sdk/1.40.0/js/Wix.js"></script>
+    <!-- jQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+    <!-- model -->
+    <script src="js/VinsModel.js"></script>
+    <script>var app = angular.module("settingsApp", []).value('compId', '<%=compId%>');</script>
+    <script src="js/settingsController.js"></script>
+</head>
+<body id='vinsApp' ng-app="settingsApp">
+<script type="text/ng-template" id='tmplArticle.html'>
+    <div class='article-title'>
+        <div class="attribute"><i>Description</i>: 
+            <input type='text' ng-model='art.description' /></div>
+        <div class="attribute"><i>Prix unitaire</i>:
+            <input type='text' class='article-prixuni' ng-model='art.prixuni' size=8 /> centimes</div>
+        <div class="attribute"><i>Exemple</i>: 
+            4 {{art.description}} a {{art.fprixuni()}}</div>
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(gp2, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(gp2, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(gp2, $index, $event)'><div /></button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id='tmplTypeBouteille.html'>
+    <div class='group-title'>
+        <div class='toggle-handler' ng-click='toggleGroup(gp2, $event)'></div>
+        <input type='text' ng-model='gp2.description' />
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(gp1, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(gp1, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(gp1, $index, $event)'><div /></button>
+        </div>
+    </div>
+    <div class='group-body'>
+        <div class='groups'>
+            <article class='group' ng-repeat='art in gp2.children'></article>
+        </div>
+        <div class='group-buttons'>
+            <button class='appendGroup' ng-click='appendArticle(gp2, $event)'><div /></button>
+        </div>
+        <div style='clear: both' />
+    </div>
+</script>
+
+<script type="text/ng-template" id='tmplCouleurVin.html'>
+    <div class='group-title'>
+        <div class='toggle-handler' ng-click='toggleGroup(gp1, $event)'></div>
+        <input type='text' ng-model='gp1.description' />
+        <div class='group-buttons'>
+            <button class='moveGroupUp' ng-click='moveGroupUp(vins, $index, $event)'><div /></button
+            ><button class='moveGroupDown' ng-click='moveGroupDown(vins, $index, $event)'><div /></button
+            ><button class='deleteGroup' ng-click='deleteGroup(vins, $index, $event)'><div /></button>
+        </div>
+    </div>
+    <div class='group-body'>
+        <div class='groups'>
+            <type-bouteille class='group' ng-repeat='gp2 in gp1.children'></type-bouteille>
+        </div>
+        <div class='group-buttons'>
+            <button class='appendGroup' ng-click='appendGroup(gp1, $event)'><div /></button>
+        </div>
+        <div style='clear: both' />
+    </div>
+</script>
+
+<form id='formsettings' ng-controller="settingsCtrl">
+<h2>Gestion des articles</h2>
+<div>
+    <div>Couleurs de vin</div>
+    <div class='groups'>
+        <couleur-vin class='group' ng-repeat='gp1 in vins.children'></couleur-vin>
+    </div>
+    <div class='group-buttons'>
+        <button class='appendGroup' ng-click='appendGroup(vins, $event)'><div /></button>
+    </div>
+    <div>
+        <button ng-click="submit_settings()">Sauver</button>
+    </div>
+</div>
+
+</form>
+</div>
+
+
+</body>	
+</html>

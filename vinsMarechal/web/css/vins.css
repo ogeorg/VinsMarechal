@@ -1,0 +1,58 @@
+body {
+	margin: 0;
+}
+#vinsApp {
+	background: #272727;
+	border: 1px #fff solid;
+	padding: 8px;
+	font-family: 'open sans', sans-serif;
+	font-size: 14px;
+	color: #fff;	
+}
+.qtte {
+	width: 30px;
+	text-align: right;
+}
+.totbt {
+	width: 65px;
+	text-align: right;
+}
+.total {
+	font-weight: bold;
+	color: #AC185F;
+}
+.floating {
+	float: left; 
+	width: 45%; 
+	margin-right: 10px;
+	border: 0px green solid;
+	min-width: 280px;
+}
+table.tablechoix {
+	margin-top: 10px;
+	margin-bottom: 5px;
+	border-collapse: collapse;
+	font-family: 'open sans', sans-serif;
+	font-size: 14px;
+	color: #fff;
+}
+.tablechoix td {
+	border:0px black solid;
+}
+.tablechoix td:first-child {
+	width: 35px;
+	border: 0px red solid;
+}
+
+.sectionvins {
+	clear: both;
+	font-weight: bold;
+	margin: 10px 0 5px 0;
+}
+.clear {
+	clear: both;
+}
+.adresse {
+	width: 98%;
+	height: 50px;
+}

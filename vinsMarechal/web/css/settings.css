@@ -1,0 +1,162 @@
+#vinsApp {
+
+}
+
+couleur-vin, type-bouteille, article {
+    display: block;
+}
+
+couleur-vin:first-child > .group-title > .group-buttons > .moveGroupUp {
+    visibility: hidden;
+}
+couleur-vin:last-child > .group-title > .group-buttons > .moveGroupDown {
+    visibility: hidden;
+}
+
+type-bouteille:first-child > .group-title > .group-buttons > .moveGroupUp {
+    visibility: hidden;
+}
+type-bouteille:last-child > .group-title > .group-buttons > .moveGroupDown {
+    visibility: hidden;
+}
+
+couleur-vin {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+type-bouteille {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+article {
+    background: #fff;
+    border: 1px solid #000;
+}
+
+
+article:first-child > .article-title > .group-buttons > .moveGroupUp {
+    visibility: hidden;
+}
+article:last-child > .article-title > .group-buttons > .moveGroupDown {
+    visibility: hidden;
+}
+
+
+.group-title, .article-title {
+    -background-color: #333;
+    line-height: 25px;
+    margin: 0 5px 0 5px;
+}
+.group-body, .article-body {
+    margin: 5px 20px 5px 20px;
+    display: none;
+}
+.group {
+    color: #000;
+    clear: both;
+}
+.group:first-child {
+    -webkit-border-radius: 10px 10px 0 0;
+}
+.group:last-child {
+    -webkit-border-radius: 0 0 10px 10px;
+}
+
+.acc-pane: {
+    -webkit-border-radius: initial;
+    -moz-border-radius: initial;
+    -ms-border-radius: initial;
+    -o-border-radius: initial;
+    border-radius: initial;
+    margin-bottom: 0 !important;
+}
+.acc-pane:first-child {
+    -webkit-border-radius: 7px 7px 0 0;
+    -moz-border-radius: 7px 7px 0 0;
+    -ms-border-radius: 7px 7px 0 0;
+    -o-border-radius: 7px 7px 0 0;
+    border-radius: 7px 7px 0 0;
+    margin-bottom: 0 !important;
+}
+.acc-pane:last-child {
+    -webkit-border-radius: 0 0 7px 7px;
+    -moz-border-radius: 0 0 7px 7px;
+    -ms-border-radius: 0 0 7px 7px;
+    -o-border-radius: 0 0 7px 7px;
+    border-radius: 0 0 7px 7px;
+}
+
+.add-group, .add-article {
+    clear: both;
+    text-align: right;
+}
+.toggle-handler {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    background: url(../img/glyphicons-halflings.png);
+    background-position: 15px 89px;
+}
+x.toggle-handler {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAACECAYAAAByMxA3AAAAGXRFW…ZkBs83JaH1L9uyfxXxQlPCmOpUyTwzq5NZA+4Z2H8CDAACHvamDe7eZgAAAABJRU5ErkJggg==);
+    background-repeat: no-repeat;
+    background-position: 0 -85px;
+    width: 22px;
+    height: 23px;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.toggle-handler.open {
+    background-position: 158px 42px;
+}
+article .attribute {
+    display: inline-block;
+    width: 30%;
+}
+.article-prixuni {
+    width: 50px;
+    text-align: right;
+}
+.group-buttons {
+    float: right;
+}
+.group-buttons button {
+    background-color: #fff;
+    padding: 0;
+}
+.group-buttons button div {
+    background: url(../img/glyphicons-halflings.png);
+    height: 18px;
+    width: 18px;
+}
+.group-buttons button.deleteGroup div {
+    background-position: 159px 161px;
+}
+.group-buttons button.deleteGroup:active div {
+    background-position: 160px 162px;
+}
+.group-buttons button.moveGroupDown div {
+    background-position: 158px 41px;
+}
+.group-buttons button.moveGroupDown:active div {
+    background-position: 159px 42px;
+}
+.group-buttons button.moveGroupUp div {
+    background-position: 183px 40px;
+}
+.group-buttons button.moveGroupUp:active div {
+    background-position: 184px 41px;
+}
+.group-buttons button.appendGroup {
+    margin-right: 6px;
+}
+.group-buttons button.appendGroup div {
+    background-position: 63px 64px;
+}
+.group-buttons button.appendGroup:active div {
+    background-position: 64px 65px;
+}

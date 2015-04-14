@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="css/vins.css">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+<script src="js/VinsModel.js"></script>
+<script src="js/client.js"></script>
+<script>var app = angular.module("vinsApp", []).value('compId', '<%=compId%>');</script>
+<script src="js/vinsController.js"></script>
+
+</head>
+<body id='vinsApp' ng-app="vinsApp">
+
+<form id='formvins' ng-controller="vinsCtrl">
+<p>Votre prénom et nom :<br />
+<select id='civi' ng-model="client.civi">
+    <option value='Mme'>Madame</option>
+    <option value='Mlle'>Mademoiselle</option>
+    <option value='M.'>Monsieur</option>
+</select> <input id='nom' ng-model='client.nom' type="text" required></p>
+<p>Votre adresse email :<br />
+    <input id='email' ng-model='client.email' type='email' placeholder="exemple@domaine.com" required></p>
+<p class='floating'>Adresse de livraison :<br />
+    <textarea id='dirlivr' ng-model='client.dirlivr' class='adresse' required></textarea></p>
+<p class='floating'>Adresse de facturation si différente :<br />
+    <textarea id='dirfact' ng-model='client.dirfact' class='adresse' required></textarea></p>
+<div ng-repeat='gp1 in vins.children'>
+    <p class='sectionvins'>{{gp1.description}}</p>
+    <table class='floating tablechoix' ng-repeat='gp2 in gp1.children'>
+        <tr>
+            <th colspan='3'>{{gp2.description}}</th>
+        </tr>
+        <tr ng-repeat='art in gp2.children'>
+            <td><input type='text' ng-model='art.unit' id='ch50_1' class='qtte' placeholder='0'/></td>
+            <td>{{art.description}} à {{art.fprixuni()}}</td>
+            <td class='totbt'>{{art.fprixtot()}}</td>
+        </tr>
+    </table>
+</div>
+
+<p id='ptotal' class='total clear'>Total: <span id='total'>{{vins.total()}}</span></p>
+
+<p class='clear'>
+Si vous le voulez, vous pouvez ajouter un message à votre commande:<br />
+<textarea id='commentaire' rows="6" cols="40" placeholder="Votre message"></textarea>
+</p>
+<p>
+    <button ng-click='send_form()'>Envoyer</button>
+    <button ng-click='reset_form()'>Annuler</button>
+</p>
+</form>
+
+</body>	
+</html>
