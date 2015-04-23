@@ -11,7 +11,7 @@ var Authentication = require('./testConnection/authentication');
 console.log("starting app...");
 // console.log(process.env);
 
-if (process.env.APP_SECRET === undefined) {
+if (process.env.APP_SECRET_VML === undefined) {
     require('dotenv').load();
 }
 var app = express();
