@@ -1,6 +1,12 @@
 var fs = require('fs');
 var pg = require('./pgTestConnection');
 
+var viewsPrefix = '';
+exports.set = function(key, value) {
+    if (key == 'views prefix') {
+        viewsPrefix = value;
+    }
+};
 exports.appWidget = function (req, res) {
     console.log("Entering appWidget");
     var compId = req.query.compId;
@@ -8,13 +14,13 @@ exports.appWidget = function (req, res) {
     pg.getData(compId, 
         function onSuccess(data) {
             console.log("Got data, value is " + data);
-            res.render('app', { 
+            res.render(viewsPrefix + 'app', { 
                 name: data.name,
                 age: data.age
             });                     
         }, function onError(error) {
             console.log("Error reading data.txt");
-            res.render('app', { 
+            res.render(viewsPrefix + 'app', { 
                 name: "... unknown!",
                 age: "... unknown!",
             }); 
@@ -26,14 +32,14 @@ exports.appSetting = function (req, res) {
     var compId = req.query.origCompId;
     console.log("compId =", compId);
     var renderSuccess = function (data) {
-        res.render('settings', { 
+        res.render(viewsPrefix + 'settings', { 
             name: data.name,
             age: data.age,
             compId: compId,
         });                     
     };
     var renderError = function(error) {
-        res.render('settings', { 
+        res.render(viewsPrefix + 'settings', { 
             name: "",
             age: "",
             compId: compId,
