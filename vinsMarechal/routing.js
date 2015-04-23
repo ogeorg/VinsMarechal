@@ -284,8 +284,15 @@ exports.settingsWidget = function (req, res) {
             error: error,
         }); 
     };
+
+    /* 
+    Pour renderiser la page, j'ai besoin de données du registre
+    Est-ce bien vrai??? j'ai des doutes
+    ON va faire sans
+    */
+    /*
     dao.getData(compId, 
-        function onSuccess(data) {
+        function onGetDataSuccess(vins, shop) {
             console.log("Got data, value is " + data);
             renderSuccess(data);
         }, function onError(error) {
@@ -294,7 +301,7 @@ exports.settingsWidget = function (req, res) {
                 console.log("Pas de registre pour ce widget ("+compId+"). Il faut le créer");
                 var data = {};
                 dao.setData(compId,
-                    data,
+                    data, 
                     function onSuccess(result) {
                         console.log("Registre créé pour le widget ("+compId+")");
                         renderSuccess(data);
@@ -307,6 +314,8 @@ exports.settingsWidget = function (req, res) {
                 renderError(error);
             }
         });
+    */
+    renderSuccess();
 };
 
 exports.updateData = function (req, res) {

@@ -4,7 +4,7 @@ var pg = require('pg'),
 client.connect();
 
 
-function _selectData(compId, onSuccess, onError) {
+function _selectData(compId, onGetDataSuccess, onError) {
     client.query(
         'SELECT vins, shop FROM listevins WHERE compid=$1',
         [compId],
@@ -18,7 +18,7 @@ function _selectData(compId, onSuccess, onError) {
                     onError({command: "SELECT", rowCount: 0, message: "no row found"});
                 } else if (rows.length == 1) {
                     var row = rows[0];
-                    onSuccess(row.vins, row.shop);
+                    onGetDataSuccess(row.vins, row.shop);
                 } else {
                     onError({command: "SELECT", rowCount: rows.length, message: "more than 1 row found"});
                 }
@@ -130,10 +130,10 @@ function _deleteData(compId, onSuccess, onError)
  * @param function onSuccess(data), avec data = {name: <name>, age: <age>}
  * @param function onError(error), avec error = {command: "SELECT", rowCount: <nbRows>, message: <message d'erreur>} 
  */
-function getData(compId, onSuccess, onError) 
+function getData(compId, onGetDataSuccess, onError) 
 {
     if (compId) {
-        var data = _selectData(compId, onSuccess, onError);
+        var data = _selectData(compId, onGetDataSuccess, onError);
     } else {
         onError({command: "getData", rowCount:0, message: "id du composant non spécifié"});
     }
@@ -151,6 +151,7 @@ function setData(compId, vins, shop, onSuccess, onError)
 {
     console.log("setData - compId =", compId);
     console.log("setData - vins =", vins);
+    console.log("setData - shop =", shop);
     if (compId) {
         _updateDataOrInsert(compId, vins, shop, onSuccess, onError);
     } else {

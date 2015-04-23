@@ -11,8 +11,8 @@
 * intégrer dans wix VinsMaréchal
 * listevins: changer data -> vins
 
-1) Passer le code a heroku
-2) Passer les variables d'env
-3) Passer les tables
+1) ~~Passer le code a heroku~~
+2) ~~Passer les variables d'env~~
+3) ~~Passer les tables: listevins et commandesvins (et seq)~~
 4) Créer le widget sur wix
 5) 
