@@ -6,7 +6,7 @@ client.connect();
 
 function _selectData(compId, onSuccess, onError) {
     client.query(
-        'SELECT data FROM listevins WHERE compid=$1',
+        'SELECT vins, shop FROM listevins WHERE compid=$1',
         [compId],
         function(error, result) {
             if (error) {
@@ -18,7 +18,7 @@ function _selectData(compId, onSuccess, onError) {
                     onError({command: "SELECT", rowCount: 0, message: "no row found"});
                 } else if (rows.length == 1) {
                     var row = rows[0];
-                    onSuccess(row.data);
+                    onSuccess(row.vins, row.shop);
                 } else {
                     onError({command: "SELECT", rowCount: rows.length, message: "more than 1 row found"});
                 }
@@ -26,12 +26,12 @@ function _selectData(compId, onSuccess, onError) {
         });
 }
 
-function _insertData(compId, data, onSuccess, onError)
+function _insertData(compId, vins, shop, onSuccess, onError)
 {
-    console.log("_insertData", data)
+    console.log("_insertData", vins, shop)
     client.query(
-        'INSERT INTO listevins (compid, data) VALUES ($1, $2)',
-        [compId, data],
+        'INSERT INTO listevins (compid, vins, shop) VALUES ($1, $2)',
+        [compId, vins, shop],
         function(error, result) {
             if (error) {
                 onError({command: "INSERT", rowCount: 0, message: error});
@@ -53,13 +53,15 @@ function _insertData(compId, data, onSuccess, onError)
             }
         });
 }
-function _updateDataOrInsert(compId, data, onSuccess, onError)
+
+function _updateDataOrInsert(compId, vins, shop, onSuccess, onError)
 {
-    data = JSON.stringify(data);
-    console.log("_updateDataOrInsert", data)
+    vins = JSON.stringify(vins);
+    shop = JSON.stringify(shop);
+    console.log("_updateDataOrInsert", vins, shop)
     client.query(
-        'UPDATE listevins SET data=$2 WHERE compid=$1',
-        [compId, data],
+        'UPDATE listevins SET vins=$2, shop=$3 WHERE compid=$1',
+        [compId, vins, shop],
         function(error, result) {
             if (error) {
                 console.log("_updateDataOrInsert - error, message =", error)
@@ -78,7 +80,7 @@ function _updateDataOrInsert(compId, data, onSuccess, onError)
                     _getTypeParser: [Function] }
                 */
                 if (result.rowCount == 0) {
-                    _insertData(compId, data, onSuccess, onError);
+                    _insertData(compId, vins, shop, onSuccess, onError);
                 } else if (result.rowCount == 1) {
                     onSuccess({command: "UPDATE", rowCount: 1});
                 } else {
@@ -145,12 +147,12 @@ function getData(compId, onSuccess, onError)
  * @param function onSuccess(result), avec result = {command: "UPDATE"|"INSERT"} 
  * @param function onError(error), avec error = {command: "UPDATE"|"INSERT", rowCount: <nbRows>, message: <message d'erreur>} 
  */
-function setData(compId, data, onSuccess, onError)
+function setData(compId, vins, shop, onSuccess, onError)
 {
     console.log("setData - compId =", compId);
-    console.log("setData - data =", data);
+    console.log("setData - vins =", vins);
     if (compId) {
-        var data = _updateDataOrInsert(compId, data, onSuccess, onError);
+        _updateDataOrInsert(compId, vins, shop, onSuccess, onError);
     } else {
         onError({command: "setData", rowCount:0, message: "id du composant non spécifié"});
     }
@@ -165,98 +167,59 @@ function removeData(compId, onSuccess, onError)
     }
 }
 
+function insertCommand(compId, cl, cms, com, onSuccess, onError)
+{
+    if (compId) {
+        console.log("insertCommand", compId, cl, com);
+        console.log(cms);
+        cms = JSON.stringify(cms);
+        console.log(cms);
+        client.query(
+            "INSERT INTO commandesvins (cmd_date, cmd_compid, "+
+                "cmd_name, cmd_email, cmd_dir_delivery, cmd_dir_facturation, "+
+                "cmd_vins, "+
+                "cmd_comment) "+
+            "VALUES (CURRENT_TIMESTAMP, $1, "+
+                "$2, $3, $4, $5, "+
+                "$6, "+
+                "$7) RETURNING cmd_id",
+            [compId, 
+                cl.civi + " " + cl.nom, cl.email, cl.dirlivr, cl.dirfact,
+                cms,
+                com],
+            function(error, result) {
+                if (error) {
+                    onError({command: "INSERT", rowCount: 0, message: error});
+                } else {
+                    /*
+                    INSERT: { command: 'INSERT',
+                      rowCount: 1,
+                      oid: 0,
+                      rows: [ { cmd_id: '1' } ],
+                      fields: 
+                       [ { name: 'cmd_id',
+                           tableID: 24610,
+                           columnID: 1,
+                           dataTypeID: 1700,
+                           dataTypeSize: -1,
+                           dataTypeModifier: -1,
+                           format: 'text' } ],
+                      _parsers: [ [Function] ],
+                      RowCtor: [Function],
+                      rowAsArray: false,
+                      _getTypeParser: [Function] }
+                    */
+                    onSuccess({command: "INSERT", rowCount: 1});
+                }
+            });
+    } else {
+        onError({command: "insertCommand", rowCount:0, message: "id du composant non spécifié"});
+    }
+}
+
 module.exports = {
     getData: getData,
     setData: setData,
-    removeData: removeData
+    removeData: removeData,
+    insertCommand: insertCommand
 };
-
-// select data->'name' from listevins;
-/*
-    function(compId, onSuccess, onError) {
-        if (id) {
-            client.query(
-                "SELECT * FROM commandesmenus WHERE id=$1",
-                [id],
-                function(error, result) {
-                    if (error) {
-                        onError(error);
-                    } else {
-                        var rows = result.rows;
-                        var row = rows.length == 0 ? {} : rows[0];
-                        onSuccess(row);
-                    }
-                });
-        } else {
-            onError("id non spécifié");
-        }
-    },
-
-function setData(compId, data) 
-{
-
-}
-function insertData(compId, data) 
-{
-
-}
-
-function updateData(compId, data)
-{
-
-}
-module.exports = {
-    getData: getData,
-    setData: function(compId, onSuccess, onError) {
-        client.query(
-            "DELETE FROM commandesmenus WHERE id=$1",
-            [id],
-            function(error, result) {
-                if (error) {
-                    onError(error);
-                } else {
-                    onSuccess();
-                }
-            });
-    },
-    updateMenu: function(menu, onSuccess, onError) {
-        client.query(
-            "UPDATE commandesmenus SET notable=$1, entree=$2, principal=$3 WHERE id=$4",
-            [menu.notable, menu.entree, menu.principal, menu.id],
-            function(error, result) {
-                if (error) {
-                    onError(error);
-                } else {
-                    onSuccess();
-                }
-            });
-    },
-    insertMenu: function(menu, onSuccess, onError) {
-        client.query(
-            "INSERT into commandesmenus (notable, entree, principal) VALUES($1, $2, $3) RETURNING id",
-            [menu.notable, menu.entree, menu.principal],
-            function(error, result) {
-                if (error) {
-                    onError(error);
-                } else {
-                    var newid = result.rows[0].id;
-                    onSuccess(newid);
-                }
-            });
-    },
-    getMenus: function(onSuccess, onError) {
-        client.query(
-            "SELECT * FROM commandesmenus",
-            function(error, result) {
-                if (error) {
-                    console.log("getMenus: error -> " + error);
-                    onError(error);
-                } else {
-                    console.log("getMenus: ok -> " + result.rows);
-                    onSuccess(result.rows);
-                }
-            });
-    },
-};
-
-*/

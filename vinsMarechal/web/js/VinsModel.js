@@ -54,11 +54,11 @@ Group.prototype.total = function()
  */
 Group.prototype.collectCommands = function(commands, descriptions)
 {
-    descriptions.push(this.description);
+    if (this.description) descriptions.push(this.description);
     for(var c=0; c<this.children.length; c++) {
-        tot += this.children[c].collectCommands(commands, descriptions);
+        this.children[c].collectCommands(commands, descriptions);
     }
-    descriptions.pop();
+    if (this.description) descriptions.pop();
 }
 
 Group.prototype.moveChildUp = function(index) {
@@ -110,28 +110,50 @@ Article.prototype.collectCommands = function(commands, descriptions)
     if (this.unit) {
         commands.push({
             'group': descriptions.join(" / "),
-            'item': item.desc,
-            'prixuni': item.prixuni,
-            'units': item.unit
+            'item': this.description,
+            'prixuni': this.prixuni,
+            'units': this.unit
         })
     }
 }
+
+/**
+ * Formatte un prix
+ * @param prix le prix en centimes
+ * @return le prix en string
+ */
+function formatFrancs(prix) 
+{
+    var cts = prix % 100;
+    var frs = (prix-cts) / 100;
+    cts = ""+cts;
+    if (cts.length==1) cts = cts + "0";
+    return "Frs. " + frs + "." + cts;
+}
+
+/**
+ * Formatte le prix unitaire 
+ * @return le prix en string
+ */
 Article.prototype.fprixuni = function()
 {
-    return this.prixuni / 100;
+    return formatFrancs(this.prixuni);
 };
 
+/**
+ * Formatte le prix total 
+ * @return le prix en string
+ */
 Article.prototype.fprixtot = function()
 {
     if (this.unit == 0)
         return "";
     else
-        return this.prixuni * this.unit / 100;
+        return formatFrancs(this.prixuni * this.unit);
 };
 
 /**
  * Classe de base pour les vins
- * 
  * <p>S'utilise avant de charger le modèle</p>
  */
 function VinsBase()
@@ -170,11 +192,11 @@ function Vins(data)
 }
 Vins.prototype = new Group();
 
-Vins.prototype.total = function()
+Vins.prototype.ftotal = function()
 {
     var tot = 0;
     for(var c=0; c<this.children.length; c++) {
         tot += this.children[c].total();
     }
-    return tot / 100;
+    return formatFrancs(tot);
 }

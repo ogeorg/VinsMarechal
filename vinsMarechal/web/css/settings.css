@@ -58,10 +58,14 @@ article:last-child > .article-title > .group-buttons > .moveGroupDown {
     clear: both;
 }
 .group:first-child {
-    -webkit-border-radius: 10px 10px 0 0;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    x-webkit-border-radius: 10px 10px 0 0;
 }
 .group:last-child {
-    -webkit-border-radius: 0 0 10px 10px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    x-webkit-border-radius: 0 0 10px 10px;
 }
 
 .acc-pane: {

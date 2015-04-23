@@ -1,13 +1,16 @@
 <html>
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="css/vins.css">
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
-<script src="js/VinsModel.js"></script>
-<script src="js/client.js"></script>
-<script>var app = angular.module("vinsApp", []).value('compId', '<%=compId%>');</script>
-<script src="js/vinsController.js"></script>
-
+    <link rel="stylesheet" href="css/vins.css">
+    <!-- Wix SDK -->
+    <script src="http://sslstatic.wix.com/services/js-sdk/1.40.0/js/Wix.js"></script>
+    <!-- Angular -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+    <!-- model -->
+    <script src="js/VinsModel.js"></script>
+    <script src="js/client.js"></script>
+    <script>var app = angular.module("vinsApp", []).value('compId', '<%=compId%>');</script>
+    <script src="js/vinsController.js"></script>
 </head>
 <body id='vinsApp' ng-app="vinsApp">
 
@@ -38,11 +41,11 @@
     </table>
 </div>
 
-<p id='ptotal' class='total clear'>Total: <span id='total'>{{vins.total()}}</span></p>
+<p id='ptotal' class='total clear'>Total: <span id='total'>{{vins.ftotal()}}</span></p>
 
 <p class='clear'>
 Si vous le voulez, vous pouvez ajouter un message à votre commande:<br />
-<textarea id='commentaire' rows="6" cols="40" placeholder="Votre message"></textarea>
+<textarea id='commentaire' rows="6" cols="40" placeholder="Votre message">{{commentaire}}</textarea>
 </p>
 <p>
     <button ng-click='send_form()'>Envoyer</button>

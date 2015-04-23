@@ -1,10 +1,15 @@
-app.controller("settingsCtrl", function($scope, $http, $compile, compId) 
+app.controller("settingsCtrl", function($scope, $http, $compile, compId, Wix) 
 {
     console.log("initCompId with compId =", compId);
+    // On met l'id du widget Wix dans le scope
     $scope.compId = compId;
-    $http({method: 'GET', url: '/vinsMarechal/vins?compId=' + compId}).
+    
+    // On récupère la liste des vins par ajax et on la met dans le scope
+    $http({method: 'GET', url: '/vinsMarechal/settingsData?compId=' + compId}).
     success(function(data, status, headers, config) {
-        $scope.vins = new Vins(data);
+        console.log(data);
+        $scope.vins = new Vins(data.vins);
+        $scope.shop = data.shop;
     }).error(function(data, status, headers, config) {
         console.error("Could not load data");
         console.error(data);
@@ -35,10 +40,12 @@ app.controller("settingsCtrl", function($scope, $http, $compile, compId)
     $scope.submit_settings = function() {
         console.log("SEND SETTINGS");
         var vins = this.vins;
+        var shop = this.shop;
         $http
-            .post("/vinsMarechal/vins", {compId: $scope.compId, vins: vins.children})
+            .post("/vinsMarechal/vins", {compId: $scope.compId, vins: vins.children, shop: shop})
             .success(function(data, status, headers, config) {
                 alert("settings envoyés");
+                Wix.Settings.refreshApp({param1: "value1", param2: "value2"})
                 })
             .error(function(data, status, headers, config) {
                 alert("problème avec la commande");

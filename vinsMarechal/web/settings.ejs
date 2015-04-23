@@ -1,7 +1,6 @@
 <html>
 <head>
-<meta charset="utf-8">
-    <xlink rel="stylesheet" href="css/ui-lib.min.css"/>
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="css/vins.css" />
     <link rel="stylesheet" href="css/settings.css" />
     <!-- Wix SDK -->
@@ -12,7 +11,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
     <!-- model -->
     <script src="js/VinsModel.js"></script>
-    <script>var app = angular.module("settingsApp", []).value('compId', '<%=compId%>');</script>
+    <script>
+    var app = angular.module("settingsApp", [])
+                .value('compId', '<%=compId%>')
+                .value('Wix', Wix);
+    </script>
     <script src="js/settingsController.js"></script>
 </head>
 <body id='vinsApp' ng-app="settingsApp">
@@ -75,7 +78,15 @@
 </script>
 
 <form id='formsettings' ng-controller="settingsCtrl">
+<h2>Gestion du compte mail</h2>
+<p>Nom du commerce</p>
+<input type='text' ng-model='shop.name' placeholder='nom du commerce' />
+<p>Adresse mail du commerce, où sera envoyé une copie de la commande</p>
+<input type='text' ng-model='shop.email' placeholder='mail@adresse.net' />
+<p>Sujet du mail qui sera envoyé au client</p>
+<input type='text' ng-model='shop.sujetmail' placeholder='Votre commande' />
 <h2>Gestion des articles</h2>
+<p>Liste des vins en vente, par catégorie et sous-catégorie</p>
 <div>
     <div>Couleurs de vin</div>
     <div class='groups'>
