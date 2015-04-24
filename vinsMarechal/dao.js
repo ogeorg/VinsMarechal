@@ -30,7 +30,7 @@ function _insertData(compId, vins, shop, onSuccess, onError)
 {
     console.log("_insertData", vins, shop)
     client.query(
-        'INSERT INTO listevins (compid, vins, shop) VALUES ($1, $2)',
+        'INSERT INTO listevins (compid, vins, shop) VALUES ($1, $2, $3)',
         [compId, vins, shop],
         function(error, result) {
             if (error) {
