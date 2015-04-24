@@ -13,6 +13,8 @@ app.controller("settingsCtrl", function($scope, $http, $compile, compId, Wix)
     }).error(function(data, status, headers, config) {
         console.error("Could not load data");
         console.error(data);
+        $scope.vins = new Vins([]);
+        $scope.shop = {};
     });
 
     $scope.$on("$destroy", function() {
