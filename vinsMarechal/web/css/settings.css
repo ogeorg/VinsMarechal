@@ -118,7 +118,7 @@ x.toggle-handler {
     background-position: 158px 42px;
 }
 article .attribute {
-    display: inline-block;
+    display: block;
     width: 30%;
 }
 .article-prixuni {
