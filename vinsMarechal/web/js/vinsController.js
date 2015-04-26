@@ -1,10 +1,10 @@
 app.controller("vinsCtrl", function($scope, $http, compId) {
     $scope.client = new Client ();
-    $scope.client.civi = "M.";
-    $scope.client.nom = "Olivier Georg";
-    $scope.client.email = "oliviergeorg@gmail.com";
+    $scope.client.civi = "";
+    $scope.client.nom = "";
+    $scope.client.email = "";
 
-    $scope.commentaire = "comment!!!";
+    $scope.commentaire = "";
     
     console.log("initCompId with compId =", compId);
     $scope.compId = compId;
