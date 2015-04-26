@@ -6,7 +6,7 @@ client.connect();
 
 function _selectData(compId, onGetDataSuccess, onError) {
     client.query(
-        'SELECT vins, shop FROM listevins WHERE compid=$1',
+        'SELECT lst_vins, lst_shop FROM listevins WHERE lst_compid=$1',
         [compId],
         function(error, result) {
             if (error) {
@@ -18,7 +18,7 @@ function _selectData(compId, onGetDataSuccess, onError) {
                     onError({command: "SELECT", rowCount: 0, message: "no row found"});
                 } else if (rows.length == 1) {
                     var row = rows[0];
-                    onGetDataSuccess(row.vins, row.shop);
+                    onGetDataSuccess(row.lst_vins, row.lst_shop);
                 } else {
                     onError({command: "SELECT", rowCount: rows.length, message: "more than 1 row found"});
                 }
@@ -30,7 +30,7 @@ function _insertData(compId, vins, shop, onSuccess, onError)
 {
     console.log("_insertData", vins, shop)
     client.query(
-        'INSERT INTO listevins (compid, vins, shop) VALUES ($1, $2, $3)',
+        'INSERT INTO listevins (lst_compid, lst_vins, lst_shop, lst_datemod) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)',
         [compId, vins, shop],
         function(error, result) {
             if (error) {
@@ -60,7 +60,7 @@ function _updateDataOrInsert(compId, vins, shop, onSuccess, onError)
     shop = JSON.stringify(shop);
     console.log("_updateDataOrInsert", vins, shop)
     client.query(
-        'UPDATE listevins SET vins=$2, shop=$3 WHERE compid=$1',
+        'UPDATE listevins SET lst_vins=$2, lst_shop=$3, lst_datemod=CURRENT_TIMESTAMP WHERE lst_compid=$1',
         [compId, vins, shop],
         function(error, result) {
             if (error) {
@@ -93,7 +93,7 @@ function _updateDataOrInsert(compId, vins, shop, onSuccess, onError)
 function _deleteData(compId, onSuccess, onError) 
 {
     client.query(
-        'DELETE FROM listevins WHERE compid = $1',
+        'DELETE FROM listevins WHERE lst_compid = $1',
         [compId],
         function(error, result) {
             if (error) {
